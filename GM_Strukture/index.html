@@ -6,9 +6,9 @@
   <title>Globales Stimmungsbarometer</title>
   <meta
     name="description"
-    content="Globales Stimmungsbarometer: anonym, aggregiert, monatlich. Lernspiel-inspiriertes, klares UI fuer GitHub Pages."
+    content="Globales Stimmungsbarometer: anonym, aggregiert, monatlich. Klar strukturiertes World-Barometer fuer GitHub Pages."
   />
-  <meta name="theme-color" content="#182034" />
+  <meta name="theme-color" content="#f6f7f8" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -22,7 +22,7 @@
       </div>
 
       <nav class="nav" aria-label="Navigation">
-        <button class="chip" data-scroll="#vote" type="button">Quest starten</button>
+        <button class="chip" data-scroll="#vote" type="button">Abstimmen</button>
         <button class="chip" data-scroll="#stats" type="button">Weltstatistik</button>
         <button class="chip" data-scroll="#method" type="button">Methodik</button>
         <button class="chip danger" id="resetLocal" type="button">Lokale Puffer loeschen</button>
@@ -30,206 +30,210 @@
       </nav>
     </header>
 
-    <main class="layout">
-      <section class="card" id="stats" aria-labelledby="statsTitle">
-        <div class="cardHd">
-          <h2 id="statsTitle">Weltstatistik</h2>
-          <div class="hint" id="liveHint">Live-Statistik aus API (mit lokalem Cache-Fallback).</div>
-        </div>
+    <div class="tabBar" role="tablist" aria-label="Bereiche">
+      <button class="tabBtn active" id="tabStatsBtn" role="tab" aria-selected="true" aria-controls="statsTab" data-tab="statsTab" type="button">Weltstatistik</button>
+      <button class="tabBtn" id="tabVoteBtn" role="tab" aria-selected="false" aria-controls="voteTab" data-tab="voteTab" type="button">Monatliche Abstimmung</button>
+    </div>
 
-        <div class="cardBd">
-          <section class="heroPanel" aria-label="Global Mood Index">
-            <div class="heroMain">
-              <div class="label">Global Mood Index</div>
-              <div class="heroNumber" id="globalIndex">-</div>
-              <div class="moodMeter" role="img" aria-label="Stimmungsbarometer von 0 bis 10">
-                <div class="moodScale">
-                  <span>0</span>
-                  <span>5</span>
-                  <span>10</span>
-                </div>
-                <div class="moodTrack">
-                  <div class="moodFill" id="moodFill"></div>
-                </div>
-                <div class="moodValue" id="moodValue">-</div>
-              </div>
-
-              <div class="kpiRow">
-                <div class="badge" id="deltaMoM"><span class="dot" aria-hidden="true"></span>Trend: <strong>-</strong></div>
-                <div class="badge" id="totalVotes"><span class="dot" aria-hidden="true"></span>Stimmen: <strong>0</strong></div>
-                <div class="badge warn" id="sampleHint"><span class="dot" aria-hidden="true"></span><strong>Nicht repraesentativ</strong></div>
-              </div>
-            </div>
-
-            <div class="scoreTiles" id="scoreTiles" aria-label="Bereichswerte">
-              <article class="scoreTile" data-metric="politics">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M3 10h18v10H3zM6 7h12v3H6zM11 3h2v4h-2z"/></svg>
-                  </span>
-                  <span class="scoreName">Politik</span>
-                  <span class="trend" id="trend-politics">-</span>
-                </div>
-                <div class="scoreValue" id="score-politics">0.00</div>
-              </article>
-
-              <article class="scoreTile" data-metric="environment">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C7 8 5 11 5 14a7 7 0 1014 0c0-3-2-6-7-12z"/></svg>
-                  </span>
-                  <span class="scoreName">Umwelt</span>
-                  <span class="trend" id="trend-environment">-</span>
-                </div>
-                <div class="scoreValue" id="score-environment">0.00</div>
-              </article>
-
-              <article class="scoreTile" data-metric="safety">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5z"/></svg>
-                  </span>
-                  <span class="scoreName">Sicherheit</span>
-                  <span class="trend" id="trend-safety">-</span>
-                </div>
-                <div class="scoreValue" id="score-safety">0.00</div>
-              </article>
-
-              <article class="scoreTile" data-metric="social">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4zM8 13a4 4 0 10-4-4 4 4 0 004 4zm8 1c-2.7 0-8 1.3-8 4v2h12v-2c0-2.7-5.3-4-8-4zM8 14c-2.7 0-8 1.3-8 4v2h6v-2a5.5 5.5 0 012-4z"/></svg>
-                  </span>
-                  <span class="scoreName">Soziales</span>
-                  <span class="trend" id="trend-social">-</span>
-                </div>
-                <div class="scoreValue" id="score-social">0.00</div>
-              </article>
-            </div>
-          </section>
-
-          <div class="filters">
-            <label>
-              <span class="label">Metrik</span>
-              <select id="metricSelect"></select>
-            </label>
-            <label>
-              <span class="label">Region / Land</span>
-              <select id="countrySelect"></select>
-            </label>
+    <main class="tabPanels">
+      <section class="tabPanel active" id="statsTab" role="tabpanel" aria-labelledby="tabStatsBtn">
+        <section class="card" id="stats" aria-labelledby="statsTitle">
+          <div class="cardHd">
+            <h2 id="statsTitle">Weltstatistik</h2>
+            <div class="hint" id="liveHint">Live-Statistik aus API (mit lokalem Cache-Fallback).</div>
           </div>
 
-          <section class="mapCard" aria-label="Weltkarte (vereinfachte Marker)">
-            <div class="mapLabel">Weltkarte (Markeransicht)</div>
-            <svg viewBox="0 0 900 420" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" class="mapSvg">
-              <defs>
-                <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="1.2" result="blur"/>
-                  <feMerge>
-                    <feMergeNode in="blur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
-              <rect x="0" y="0" width="900" height="420" fill="transparent"/>
-              <g filter="url(#soft)" opacity="0.9">
-                <path d="M115,115 C160,70 250,65 305,110 C345,142 355,205 310,232 C250,270 165,260 125,215 C95,182 85,145 115,115 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.10)"/>
-                <path d="M390,90 C450,55 545,62 610,104 C680,150 675,230 610,262 C540,297 430,287 385,232 C352,193 340,120 390,90 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.10)"/>
-                <path d="M670,250 C720,215 790,225 820,270 C850,315 820,365 760,372 C705,378 650,338 648,300 C646,280 655,263 670,250 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.10)"/>
-                <path d="M250,275 C305,245 360,250 390,285 C420,320 390,370 335,380 C280,390 225,357 220,318 C216,295 232,284 250,275 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.10)"/>
-              </g>
-              <g id="pins" font-family="ui-monospace" font-size="11" fill="rgba(255,255,255,.9)"></g>
-            </svg>
-          </section>
+          <div class="cardBd">
+            <section class="worldSection" aria-label="Weltkarte nach Mood-Level">
+              <div class="worldHead">
+                <div class="label">Weltkarte nach Regionen</div>
+                <div class="worldLegend">
+                  <span><i class="c low"></i>niedrig</span>
+                  <span><i class="c mid"></i>mittel</span>
+                  <span><i class="c high"></i>hoch</span>
+                </div>
+              </div>
+              <div class="worldMapWrap">
+                <svg id="worldMapSvg" viewBox="0 0 960 480" aria-label="Globale Mood-Karte"></svg>
+              </div>
+              <div class="geoControls" aria-label="Regionenauswahl">
+                <label>
+                  <span class="label">Kontinent</span>
+                  <select id="geoRegionSelect"></select>
+                </label>
+                <label>
+                  <span class="label">Land</span>
+                  <select id="geoCountrySelect"></select>
+                </label>
+                <label>
+                  <span class="label">Region/Bundesland</span>
+                  <select id="geoStateSelect"></select>
+                </label>
+                <label>
+                  <span class="label">Stadt</span>
+                  <select id="geoCitySelect"></select>
+                </label>
+                <button class="chip" id="geoResetBtn" type="button">Karte zuruecksetzen</button>
+              </div>
+              <div class="hint" id="geoSelection">Auswahl: Weltweit</div>
+            </section>
 
-          <section class="chartsGrid" aria-label="Diagramme">
-            <div class="chartWrap">
-              <canvas id="trendChart" height="130"></canvas>
-            </div>
-            <div class="chartWrap">
-              <canvas id="radarChart" height="130"></canvas>
-            </div>
-          </section>
+            <section class="heroPanel" aria-label="Global Mood Index">
+              <div class="heroMain">
+                <div class="label">Global Mood Index</div>
+                <div class="heroNumber" id="globalIndex">-</div>
+                <div class="moodMeter" role="img" aria-label="Stimmungsbarometer von 0 bis 10">
+                  <div class="moodScale">
+                    <span>0</span>
+                    <span>5</span>
+                    <span>10</span>
+                  </div>
+                  <div class="moodTrack">
+                    <div class="moodFill" id="moodFill"></div>
+                  </div>
+                  <div class="moodValue" id="moodValue">-</div>
+                </div>
 
-          <table class="table" aria-label="Top Länder">
-            <thead>
-              <tr>
-                <th>Rang</th>
-                <th>Land</th>
-                <th>Index</th>
-                <th>Delta</th>
-                <th>Stimmen</th>
-              </tr>
-            </thead>
-            <tbody id="leaderBody"></tbody>
-          </table>
+                <div class="kpiRow">
+                  <div class="badge" id="deltaMoM"><span class="dot" aria-hidden="true"></span>Trend: <strong>-</strong></div>
+                  <div class="badge" id="totalVotes"><span class="dot" aria-hidden="true"></span>Stimmen: <strong>0</strong></div>
+                  <div class="badge warn" id="sampleHint"><span class="dot" aria-hidden="true"></span><strong>Nicht repraesentativ</strong></div>
+                </div>
+              </div>
 
-          <div class="foot">
-            <div>
-              Stand: <span class="pill" id="serverTime">-</span>
-              · Version: <span class="pill" id="ver">-</span>
+              <div class="scoreTiles" id="scoreTiles" aria-label="Bereichswerte">
+                <article class="scoreTile" data-metric="politics">
+                  <div class="scoreTop">
+                    <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10h18v10H3zM6 7h12v3H6zM11 3h2v4h-2z"/></svg></span>
+                    <span class="scoreName">Politik</span>
+                    <span class="trend" id="trend-politics">-</span>
+                  </div>
+                  <div class="scoreValue" id="score-politics">0.00</div>
+                </article>
+
+                <article class="scoreTile" data-metric="environment">
+                  <div class="scoreTop">
+                    <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2C7 8 5 11 5 14a7 7 0 1014 0c0-3-2-6-7-12z"/></svg></span>
+                    <span class="scoreName">Umwelt</span>
+                    <span class="trend" id="trend-environment">-</span>
+                  </div>
+                  <div class="scoreValue" id="score-environment">0.00</div>
+                </article>
+
+                <article class="scoreTile" data-metric="safety">
+                  <div class="scoreTop">
+                    <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5z"/></svg></span>
+                    <span class="scoreName">Sicherheit</span>
+                    <span class="trend" id="trend-safety">-</span>
+                  </div>
+                  <div class="scoreValue" id="score-safety">0.00</div>
+                </article>
+
+                <article class="scoreTile" data-metric="social">
+                  <div class="scoreTop">
+                    <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4zM8 13a4 4 0 10-4-4 4 4 0 004 4zm8 1c-2.7 0-8 1.3-8 4v2h12v-2c0-2.7-5.3-4-8-4zM8 14c-2.7 0-8 1.3-8 4v2h6v-2a5.5 5.5 0 012-4z"/></svg></span>
+                    <span class="scoreName">Soziales</span>
+                    <span class="trend" id="trend-social">-</span>
+                  </div>
+                  <div class="scoreValue" id="score-social">0.00</div>
+                </article>
+              </div>
+            </section>
+
+            <div class="filters">
+              <label>
+                <span class="label">Metrik</span>
+                <select id="metricSelect"></select>
+              </label>
+              <label>
+                <span class="label">Region / Land</span>
+                <select id="countrySelect"></select>
+              </label>
             </div>
-            <div>
-              Datenschutz: <span class="pill">keine Accounts</span>
-              <span class="pill">keine Namen</span>
-              <span class="pill">nur Aggregation</span>
+
+            <section class="chartsGrid" aria-label="Diagramme">
+              <div class="chartWrap"><canvas id="trendChart" height="130"></canvas></div>
+              <div class="chartWrap"><canvas id="radarChart" height="130"></canvas></div>
+            </section>
+
+            <table class="table" aria-label="Top Länder">
+              <thead>
+                <tr>
+                  <th>Rang</th>
+                  <th>Land</th>
+                  <th>Index</th>
+                  <th>Delta</th>
+                  <th>Stimmen</th>
+                </tr>
+              </thead>
+              <tbody id="leaderBody"></tbody>
+            </table>
+
+            <div class="foot">
+              <div>Stand: <span class="pill" id="serverTime">-</span> · Version: <span class="pill" id="ver">-</span></div>
+              <div>Datenschutz: <span class="pill">keine Accounts</span> <span class="pill">keine Namen</span> <span class="pill">nur Aggregation</span></div>
             </div>
           </div>
-        </div>
+        </section>
       </section>
 
-      <aside class="card questCard" id="vote" aria-labelledby="questTitle">
-        <div class="cardHd">
-          <h2 id="questTitle">Quest: Monatsabgabe</h2>
-          <div class="hint">4 Schritte, dann geht eure Stimme ins Weltbarometer.</div>
-        </div>
-        <div class="cardBd">
-          <div class="questTop">
-            <div class="stepWrap" aria-live="polite">
-              <div class="stepText" id="questStepText">Schritt 1 von 4</div>
-              <div class="stepTrack"><div class="stepFill" id="questStepFill"></div></div>
-            </div>
-            <div class="pill" id="monthPill">-</div>
+      <section class="tabPanel" id="voteTab" role="tabpanel" aria-labelledby="tabVoteBtn">
+        <aside class="card questCard" id="vote">
+          <div class="cardHd">
+            <h2 id="questTitle">Monatliche Abstimmung</h2>
+            <div class="hint">Vier Bereiche bewerten, dann Abgabe bestaetigen.</div>
           </div>
 
-          <label class="questCountry">
-            <span class="label">Standort (frei gewaehlt)</span>
-            <select id="voteCountry"></select>
-          </label>
-
-          <div class="voteGrid" id="voteGrid"></div>
-
-          <div class="stickyCta">
-            <button class="btn" id="submitVote" type="button">Abgeben</button>
-            <button class="btn ghost" id="randomize" type="button">Zufallswerte</button>
-          </div>
-
-          <div class="fineprint" id="cooldownNote"></div>
-
-          <section class="card methodCard" id="method" aria-label="Methodik">
-            <div class="cardBd">
-              <div class="methodTitle">Methodik (kurz)</div>
-              <ul class="methodList fineprint">
-                <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
-                <li>Nur Skalenwerte 0-10 fuer vier Bereiche + Gesamtindex.</li>
-                <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
-                <li>Free-Tier-freundlicher Start mit klarer Skalierungsstrategie.</li>
-              </ul>
-              <div class="fineprint tags">
-                <span class="pill">#GlobalMoodIndex</span>
-                <span class="pill">#WorldPulse</span>
-                <span class="pill">#Stimmungsbarometer</span>
+          <div class="cardBd">
+            <div class="questTop">
+              <div class="stepWrap" aria-live="polite">
+                <div class="stepText" id="questStepText">Schritt 1 von 4</div>
+                <div class="stepTrack"><div class="stepFill" id="questStepFill"></div></div>
               </div>
+              <div class="pill" id="monthPill">-</div>
             </div>
-          </section>
-        </div>
-      </aside>
+
+            <label class="questCountry">
+              <span class="label">Standort (frei gewaehlt)</span>
+              <select id="voteCountry"></select>
+            </label>
+
+            <div class="voteGrid" id="voteGrid"></div>
+
+            <div class="stickyCta">
+              <button class="btn" id="submitVote" type="button">Abgeben</button>
+              <button class="btn ghost" id="randomize" type="button">Zufallswerte</button>
+            </div>
+
+            <div class="fineprint" id="cooldownNote"></div>
+
+            <section class="card methodCard" id="method" aria-label="Methodik">
+              <div class="cardBd">
+                <div class="methodTitle">Methodik (kurz)</div>
+                <ul class="methodList fineprint">
+                  <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
+                  <li>Nur Skalenwerte 0-10 fuer vier Bereiche + Gesamtindex.</li>
+                  <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
+                  <li>Free-Tier-freundlicher Start mit klarer Skalierungsstrategie.</li>
+                </ul>
+                <div class="fineprint tags">
+                  <span class="pill">#GlobalMoodIndex</span>
+                  <span class="pill">#WorldPulse</span>
+                  <span class="pill">#Stimmungsbarometer</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </aside>
+      </section>
     </main>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
