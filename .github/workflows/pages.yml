@@ -23,16 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      - name: Build static artifact from GM_Strukture
-        run: |
-          mkdir -p dist
-          cp GM_Strukture/GlobalMood.html dist/index.html
-          cp GM_Strukture/styles.css dist/styles.css
-          cp GM_Strukture/app.js dist/app.js
-          cp GM_Strukture/config.json dist/config.json
-          cp GM_Strukture/config.js dist/config.js
+      - name: Build static artifact
+  run: |
+    mkdir -p dist
+    cp index.html dist/index.html
+    cp styles.css dist/styles.css
+    cp app.js dist/app.js
+    cp config.js dist/config.js
+    cp config.json dist/config.json
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - id: deployment        uses: actions/deploy-pages@v4
