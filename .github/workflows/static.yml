@@ -33,11 +33,18 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Build Pages artifact from GM_Strukture
+        run: |
+          mkdir -p dist
+          cp GM_Strukture/index.html dist/index.html
+          cp GM_Strukture/styles.css dist/styles.css
+          cp GM_Strukture/app.js dist/app.js
+          cp GM_Strukture/config.js dist/config.js
+          cp GM_Strukture/config.json dist/config.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
