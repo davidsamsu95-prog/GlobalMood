@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Globales Stimmungsbarometer</title>
+  <meta
+    name="description"
+    content="Globales Stimmungsbarometer: anonym, aggregiert, monatlich. Online-Webapp mit kostenbewusstem Start auf Free-Tiers."
+  />
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Globales Stimmungsbarometer<span class="sub">Anonym. Aggregiert. Monatlich.</span></h1>
+        </div>
+      </div>
+
+      <div class="nav">
+        <div class="chip" data-scroll="#vote">Jetzt abstimmen</div>
+        <div class="chip" data-scroll="#stats">Weltstatistik</div>
+        <div class="chip" data-scroll="#method">Methodik</div>
+        <div class="chip danger" id="resetLocal">Lokale Puffer löschen</div>
+        <div class="chip primary" id="shareBtn">Teilen</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="stats">
+        <div class="hd">
+          <h2>Weltstatistik</h2>
+          <div class="hint" id="liveHint">Live-Statistik aus API (mit lokalem Cache-Fallback).</div>
+        </div>
+        <div class="bd">
+          <div class="hero">
+            <div>
+              <div class="muted">Global Mood Index</div>
+              <div class="big" id="globalIndex">—</div>
+              <div class="kpiRow">
+                <div class="badge" id="deltaMoM"><span class="dot"></span>Trend: <strong>—</strong> seit letztem Monat</div>
+                <div class="badge" id="totalVotes"><span class="dot"></span>Stimmen: <strong>0</strong></div>
+                <div class="badge warn" id="sampleHint"><span class="dot" style="background:rgba(255,214,102,.9)"></span><strong>Kleine Stichprobe möglich</strong></div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="controls">
+                <label>
+                  <div class="muted controlLabel">Metrik</div>
+                  <select id="metricSelect"></select>
+                </label>
+
+                <label>
+                  <div class="muted controlLabel">Region / Land</div>
+                  <select id="countrySelect"></select>
+                </label>
+              </div>
+            </div>
+
+            <div class="mapBox" aria-label="Weltkarte (vereinfachte Marker)">
+              <div class="mapLabel">Vereinfachte Marker-Ansicht (keine Choropleth-Karte)</div>
+              <div class="mapLegend">
+                <span class="legendItem"><span class="dot" style="background:rgba(255,128,128,.9)"></span><span>niedrig</span></span>
+                <span class="legendItem"><span class="dot" style="background:rgba(255,255,255,.8)"></span><span>mittel</span></span>
+                <span class="legendItem"><span class="dot" style="background:rgba(114,255,195,.9)"></span><span>hoch</span></span>
+              </div>
+
+              <svg viewBox="0 0 900 420" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" class="mapSvg">
+                <defs>
+                  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="1.2" result="blur"/>
+                    <feMerge>
+                      <feMergeNode in="blur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <rect x="0" y="0" width="900" height="420" fill="rgba(0,0,0,0)" />
+                <g filter="url(#soft)" opacity="0.95">
+                  <path d="M115,115 C160,70 250,65 305,110 C345,142 355,205 310,232 C250,270 165,260 125,215 C95,182 85,145 115,115 Z" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.10)" />
+                  <path d="M390,90 C450,55 545,62 610,104 C680,150 675,230 610,262 C540,297 430,287 385,232 C352,193 340,120 390,90 Z" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.10)" />
+                  <path d="M670,250 C720,215 790,225 820,270 C850,315 820,365 760,372 C705,378 650,338 648,300 C646,280 655,263 670,250 Z" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.10)" />
+                  <path d="M250,275 C305,245 360,250 390,285 C420,320 390,370 335,380 C280,390 225,357 220,318 C216,295 232,284 250,275 Z" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.10)" />
+                </g>
+
+                <g id="pins" font-family="ui-monospace" font-size="11" fill="rgba(255,255,255,.85)"></g>
+              </svg>
+
+              <div class="mapOverlay"></div>
+            </div>
+          </div>
+
+          <div class="split topGap">
+            <div class="chartWrap">
+              <canvas id="trendChart" height="110"></canvas>
+            </div>
+
+            <div class="chartWrap">
+              <canvas id="radarChart" height="150"></canvas>
+            </div>
+
+            <table class="table" aria-label="Top Länder">
+              <thead>
+                <tr>
+                  <th>Rang</th>
+                  <th>Land</th>
+                  <th>Index</th>
+                  <th>Δ Monat</th>
+                  <th>Stimmen</th>
+                </tr>
+              </thead>
+              <tbody id="leaderBody"></tbody>
+            </table>
+
+            <div class="foot">
+              <div>
+                Stand: <span class="pill" id="serverTime">—</span>
+                · Version: <span class="pill" id="ver">local-1.0</span>
+              </div>
+              <div>
+                Datenschutz: <span class="pill">keine Accounts</span>
+                <span class="pill">keine Namen</span>
+                <span class="pill">nur Aggregation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" id="vote">
+        <div class="hd">
+          <h2>Monatliche Abstimmung</h2>
+          <div class="hint">30 Sekunden. Eure Stimme fließt anonym in die aggregierte Statistik ein.</div>
+        </div>
+        <div class="bd">
+          <div class="voteTop">
+            <div>
+              <div class="muted controlLabel">Ihr Standort (frei gewählt)</div>
+              <select id="voteCountry"></select>
+            </div>
+            <div class="voteTopRight">
+              <div class="muted controlLabel">Monat</div>
+              <div class="pill" id="monthPill">—</div>
+            </div>
+          </div>
+
+          <div class="voteGrid topGap" id="voteGrid"></div>
+
+          <div class="btnRow">
+            <button class="btn" id="submitVote">Abstimmen & Welt sehen</button>
+            <button class="btn ghost" id="randomize">Zufallswerte</button>
+          </div>
+
+          <div class="fineprint" id="cooldownNote"></div>
+
+          <div class="divider"></div>
+
+          <div class="card methodCard" id="method">
+            <div class="bd">
+              <div class="methodTitle">Methodik (kurz)</div>
+              <div class="fineprint">
+                <ul class="methodList">
+                  <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
+                  <li>Nur Skalenwerte 0-10 für vier Bereiche + daraus errechneter Index.</li>
+                  <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
+                  <li>Kostenbewusster Start: Free-Tier Hosting + API, skalierbar bei Wachstum.</li>
+                </ul>
+              </div>
+              <div class="fineprint">
+                <span class="pill">#GlobalMoodIndex</span>
+                <span class="pill">#WorldPulse</span>
+                <span class="pill">#Stimmungsbarometer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
