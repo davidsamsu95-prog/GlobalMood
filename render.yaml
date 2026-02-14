@@ -2,7 +2,7 @@ services:
   - type: web
     name: gsb-backend
     runtime: node
-    rootDir: backend
+    rootDir: GM_Strukture/backend
     buildCommand: npm install
     startCommand: node src/server.js
     plan: free

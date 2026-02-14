@@ -11,7 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 const PORT = Number(process.env.PORT || 8787);
 const NODE_ENV = process.env.NODE_ENV || "development";
-const DATABASE_PATH = process.env.DATABASE_PATH || "./data/gsb.sqlite";
+const DATABASE_PATH = process.env.DB_PATH || process.env.DATABASE_PATH || "./data/gsb.sqlite";
 const MIN_COUNTRY_N = Number(process.env.MIN_COUNTRY_N || 5);
 const READ_CACHE_TTL_MS = Number(process.env.READ_CACHE_TTL_MS || 15000);
 const VOTE_RATE_WINDOW_MS = Number(process.env.VOTE_RATE_WINDOW_MS || 60000);
@@ -47,14 +47,19 @@ function inAllowedOrigin(origin) {
   return FRONTEND_ORIGIN.includes(origin);
 }
 
-app.use(cors({
+const corsOptions = {
   origin(origin, cb) {
     if (!origin) return cb(null, true);
     if (inAllowedOrigin(origin)) return cb(null, true);
-    return cb(new Error("Origin nicht erlaubt"));
+    return cb(null, false);
   },
   credentials: true,
-}));
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json({ limit: "25kb" }));
 app.use(cookieParser());
