@@ -43,7 +43,6 @@
   const LOCAL_MONTH_LOCK_KEY = "gm_local_month_lock_v1";
 
   const CONFIG = {
-    API_BASE: String((window.GM_CONFIG && window.GM_CONFIG.API_BASE) || "").replace(/\/$/, ""),
     REQUEST_TIMEOUT_MS: 10000,
     POLL_INTERVAL_MS: 45000,
     QUEUE_RETRY_BASE_MS: 30000,
@@ -61,6 +60,7 @@
     queueBusy: false,
     refreshBusy: false,
     online: true,
+    apiBase: "",
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -141,6 +141,32 @@
     }
   }
 
+  async function loadRuntimeConfig() {
+    const configUrl = new URL("config.json", window.location.href);
+    const fromWindowEnv = window.__ENV__ && typeof window.__ENV__.API_BASE === "string"
+      ? window.__ENV__.API_BASE
+      : "";
+
+    let fromConfigJson = "";
+    try {
+      const response = await fetch(configUrl.toString(), { cache: "no-store" });
+      if (response.ok) {
+        const runtimeConfig = await response.json();
+        if (runtimeConfig && typeof runtimeConfig.API_BASE === "string") {
+          fromConfigJson = runtimeConfig.API_BASE;
+        }
+      }
+    } catch (err) {
+      // optional runtime config file
+    }
+
+    const fromLegacyConfig = window.GM_CONFIG && typeof window.GM_CONFIG.API_BASE === "string"
+      ? window.GM_CONFIG.API_BASE
+      : "";
+
+    appState.apiBase = (fromWindowEnv || fromConfigJson || fromLegacyConfig || "").trim().replace(/\/$/, "");
+  }
+
   function metricLabel(metric) {
     const hit = METRICS.find((m) => m.key === metric);
     return hit ? hit.label : metric;
@@ -171,7 +197,7 @@
   }
 
   function apiUrl(path, params) {
-    const url = new URL(`${CONFIG.API_BASE}${path}`, window.location.origin);
+    const url = new URL(`${appState.apiBase}${path}`, window.location.origin);
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined && v !== null && v !== "") {
@@ -830,6 +856,7 @@
   }
 
   async function init() {
+    await loadRuntimeConfig();
     appState.pendingVotes = readPendingVotes();
 
     renderMetricsSelect();

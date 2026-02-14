@@ -33,14 +33,14 @@ API laeuft dann auf `http://localhost:8787`.
 - Render Free Web Service oder Fly.io Free Tier
 - Deploy direkt aus GitHub-Repo
 - Env Vars aus `.env.example` setzen
+- Alternativ direkt Blueprint aus `render.yaml` erzeugen (`New +` -> `Blueprint`)
 
 ### Frontend
 - GitHub Pages oder Cloudflare Pages
-- In `config.js` `window.GM_CONFIG.API_BASE` auf deine Backend-URL setzen
+- In `config.json` `API_BASE` auf deine Backend-URL setzen
 
 ## Skalierungsstrategie bei Lastspitzen
 - Read-Endpunkte bedienen aus kurzen In-Memory-Cache-Fenstern
 - Voting-Endpunkt separat limitiert (Rate-Limit + Burst-Guard)
 - Frontend kann Votes lokal puffern und spaeter erneut senden
 - Statistik bleibt abrufbar, auch wenn Voting kurzfristig gebremst ist
-

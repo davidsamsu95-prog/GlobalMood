@@ -29,6 +29,7 @@ jobs:
           cp GlobalMood.html dist/index.html
           cp styles.css dist/styles.css
           cp app.js dist/app.js
+          cp config.json dist/config.json
           cp config.js dist/config.js
       - uses: actions/upload-pages-artifact@v3
         with:

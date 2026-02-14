@@ -1,5 +1,5 @@
 window.GM_CONFIG = {
+  // Legacy fallback: bevorzugt wird config.json oder window.__ENV__.API_BASE.
   // Leer lassen fuer gleiche Domain wie das Backend.
-  // Beispiel fuer getrenntes Hosting: "https://dein-backend.onrender.com"
   API_BASE: "",
 };
