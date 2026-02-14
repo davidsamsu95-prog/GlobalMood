@@ -61,6 +61,7 @@
     refreshBusy: false,
     online: true,
     apiBase: "",
+    questStep: 1,
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -170,6 +171,64 @@
   function metricLabel(metric) {
     const hit = METRICS.find((m) => m.key === metric);
     return hit ? hit.label : metric;
+  }
+
+  function setQuestStep(step) {
+    const safeStep = Math.max(1, Math.min(4, Number(step) || 1));
+    appState.questStep = safeStep;
+    const text = $("#questStepText");
+    const fill = $("#questStepFill");
+    if (text) text.textContent = `Schritt ${safeStep} von 4`;
+    if (fill) fill.style.width = `${(safeStep / 4) * 100}%`;
+  }
+
+  function updateMoodMeter(globalIndex) {
+    const value = Number(globalIndex);
+    const meterValue = $("#moodValue");
+    const meterFill = $("#moodFill");
+    if (!Number.isFinite(value)) {
+      if (meterValue) meterValue.textContent = "-";
+      if (meterFill) meterFill.style.width = "0%";
+      return;
+    }
+    const clamped = Math.max(0, Math.min(10, value));
+    if (meterValue) meterValue.textContent = `${clamped.toFixed(2)} / 10`;
+    if (meterFill) meterFill.style.width = `${clamped * 10}%`;
+  }
+
+  function getTrendDelta(values) {
+    const nums = (values || []).filter((v) => Number.isFinite(v));
+    if (nums.length < 2) return null;
+    return Number((nums[nums.length - 1] - nums[nums.length - 2]).toFixed(2));
+  }
+
+  function renderScoreTiles(data) {
+    const profile = (data && data.profile) || {};
+    const trendValues = (data && data.trend && data.trend.values) || [];
+    const trendDelta = getTrendDelta(trendValues);
+
+    VOTE_METRICS.forEach((metric) => {
+      const scoreNode = $(`#score-${metric.key}`);
+      const trendNode = $(`#trend-${metric.key}`);
+      const score = Number(profile[metric.key] || 0);
+      if (scoreNode) scoreNode.textContent = score.toFixed(2);
+
+      if (trendNode) {
+        if (!Number.isFinite(trendDelta)) {
+          trendNode.textContent = "→ n/a";
+          trendNode.style.color = "rgba(181,194,224,.95)";
+        } else if (trendDelta > 0.02) {
+          trendNode.textContent = `↑ ${trendDelta.toFixed(2)}`;
+          trendNode.style.color = "rgba(89,220,161,.95)";
+        } else if (trendDelta < -0.02) {
+          trendNode.textContent = `↓ ${trendDelta.toFixed(2)}`;
+          trendNode.style.color = "rgba(255,122,138,.95)";
+        } else {
+          trendNode.textContent = "→ 0.00";
+          trendNode.style.color = "rgba(255,209,102,.95)";
+        }
+      }
+    });
   }
 
   function countryLabel(code) {
@@ -362,13 +421,19 @@
       grid.appendChild(node);
     });
 
-    VOTE_METRICS.forEach((metric) => {
+    VOTE_METRICS.forEach((metric, index) => {
       const slider = $(`#m_${metric.key}`);
       const output = $(`#o_${metric.key}`);
+      const stepNo = index + 1;
       slider.addEventListener("input", () => {
         output.textContent = slider.value;
+        setQuestStep(stepNo);
+      });
+      slider.addEventListener("focus", () => {
+        setQuestStep(stepNo);
       });
     });
+    setQuestStep(1);
   }
 
   function renderMapPins() {
@@ -411,12 +476,16 @@
 
     $$("#pins .pin").forEach((pin) => {
       const country = pin.getAttribute("data-country");
+      const countryMeta = COUNTRY_BY_CODE[country];
       const circle = pin.querySelector("circle");
       if (circle) {
         circle.setAttribute("fill", metricColor(values[country]));
       }
       pin.style.opacity = appState.currentCountry === "WORLD" || appState.currentCountry === country ? "1" : "0.35";
-      pin.style.transform = appState.currentCountry === country ? "scale(1.05)" : "scale(1)";
+      const scale = appState.currentCountry === country ? 1.08 : 1;
+      if (countryMeta) {
+        pin.setAttribute("transform", `translate(${countryMeta.x} ${countryMeta.y}) scale(${scale})`);
+      }
     });
   }
 
@@ -427,6 +496,7 @@
 
     const globalIndex = header.globalIndex;
     $("#globalIndex").textContent = Number.isFinite(globalIndex) ? Number(globalIndex).toFixed(2) : "-";
+    updateMoodMeter(globalIndex);
 
     const delta = header.deltaMoM;
     const deltaNode = $("#deltaMoM");
@@ -616,6 +686,7 @@
   function renderDashboard(data) {
     appState.dashboard = data;
     renderHeader(data);
+    renderScoreTiles(data);
     renderLeaderboard(data);
     renderCharts(data);
     updateMapPins(data.snapshot);
@@ -773,6 +844,7 @@
       slider.value = value;
       slider.dispatchEvent(new Event("input"));
     });
+    setQuestStep(4);
     toast("Zufallswerte gesetzt.");
   }
 
