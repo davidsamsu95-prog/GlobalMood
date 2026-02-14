@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: gsb-backend
+    runtime: node
+    rootDir: GM_Strukture/backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_ORIGIN
+        value: https://davidsamsu95-prog.github.io
+      - key: DB_PATH
+        value: /var/data/data.sqlite
+      - key: MIN_COUNTRY_N
+        value: "30"
+      - key: READ_CACHE_TTL_MS
+        value: "15000"
+      - key: VOTE_RATE_WINDOW_MS
+        value: "60000"
+      - key: VOTE_RATE_MAX
+        value: "8"
+      - key: VOTE_BURST_WINDOW_MS
+        value: "10000"
+      - key: VOTE_BURST_MAX
+        value: "20"
+      - key: COOKIE_NAME
+        value: gsb_device
+      - key: COOKIE_MAX_AGE_DAYS
+        value: "370"
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: COOKIE_SECURE
+        value: "true"
