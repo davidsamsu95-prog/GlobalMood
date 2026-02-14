@@ -1361,17 +1361,20 @@
     $("#randomize").addEventListener("click", randomizeVote);
     $("#shareBtn").addEventListener("click", share);
 
-    $("#resetLocal").addEventListener("click", () => {
-      const ok = window.confirm("Lokale Warteschlange, Cache und Monats-Lock wirklich loeschen?");
-      if (!ok) return;
+    const resetLocalBtn = $("#resetLocal");
+    if (resetLocalBtn) {
+      resetLocalBtn.addEventListener("click", () => {
+        const ok = window.confirm("Lokale Warteschlange, Cache und Monats-Lock wirklich loeschen?");
+        if (!ok) return;
 
-      appState.pendingVotes = [];
-      safeRemove(PENDING_VOTES_KEY);
-      safeRemove(DASHBOARD_CACHE_KEY);
-      clearLocalMonthLock();
-      renderCooldownNote(false);
-      toast("Lokale Pufferdaten geloescht.");
-    });
+        appState.pendingVotes = [];
+        safeRemove(PENDING_VOTES_KEY);
+        safeRemove(DASHBOARD_CACHE_KEY);
+        clearLocalMonthLock();
+        renderCooldownNote(false);
+        toast("Lokale Pufferdaten geloescht.");
+      });
+    }
   }
 
   function runSmokeChecks() {
