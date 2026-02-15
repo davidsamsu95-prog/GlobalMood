@@ -222,6 +222,9 @@
     activeTab: "statsTab",
     worldMapReady: false,
     worldMap: null,
+    detectedCountry: "OTHER",
+    countrySourceMode: "auto",
+    backendConfigured: false,
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -419,6 +422,22 @@
     return url.toString();
   }
 
+  function buildOfflineDashboard() {
+    return {
+      month: monthKey(),
+      metric: appState.currentMetric,
+      country: appState.currentCountry,
+      minCountryN: 0,
+      header: { globalIndex: null, deltaMoM: null, totalVotes: 0 },
+      trend: { labels: [], values: [] },
+      profile: { country: appState.currentCountry, n: 0, n_manual: 0, n_auto: 0, politics: 0, environment: 0, safety: 0, social: 0, global: 0 },
+      snapshot: { month: monthKey(), metric: appState.currentMetric, world: { n: 0, n_manual: 0, n_auto: 0, value: 0 }, countries: [] },
+      leaderboard: { month: monthKey(), metric: appState.currentMetric, rows: [] },
+      meta: { serverTime: null, version: "offline", minCountryN: 0 },
+      status: { voteBusy: false, readCacheTtlMs: 0 },
+    };
+  }
+
   async function fetchJson(path, options = {}, params) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT_MS);
@@ -461,6 +480,10 @@
       country: appState.currentCountry,
       limit: CONFIG.LEADERBOARD_LIMIT,
     });
+  }
+
+  async function getWhoAmI() {
+    return fetchJson("/api/v1/whoami", { method: "GET" });
   }
 
   async function postVote(payload) {
@@ -541,7 +564,37 @@
     voteSel.appendChild(other);
 
     statsSel.value = appState.currentCountry;
-    voteSel.value = "DE";
+    voteSel.value = appState.detectedCountry && appState.detectedCountry !== "OTHER" ? appState.detectedCountry : "DE";
+  }
+
+  function updateCountryUi() {
+    const detectedBadge = $("#detectedCountryBadge");
+    const sourceBadge = $("#countrySourceBadge");
+    const overrideToggle = $("#countryOverrideToggle");
+    const voteSelect = $("#voteCountry");
+
+    const detected = appState.detectedCountry || "OTHER";
+    if (detectedBadge) {
+      detectedBadge.textContent = `Erkannt: ${countryLabel(detected)}`;
+    }
+
+    const manualToggleOn = overrideToggle && overrideToggle.checked;
+    const selected = voteSelect ? voteSelect.value : "";
+    const manual = manualToggleOn && selected && selected !== detected;
+    appState.countrySourceMode = manual ? "manual" : "auto";
+    if (sourceBadge) {
+      sourceBadge.textContent = `Quelle: ${manual ? "manual" : "auto"}`;
+    }
+
+    if (voteSelect) {
+      voteSelect.disabled = !manualToggleOn;
+      if (!manualToggleOn) {
+        const target = detected !== "OTHER" ? detected : "OTHER";
+        if (Array.from(voteSelect.options).some((o) => o.value === target)) {
+          voteSelect.value = target;
+        }
+      }
+    }
   }
 
   function setSelectOptions(selectEl, options, selected) {
@@ -1052,6 +1105,11 @@
 
   async function refreshDashboard() {
     if (appState.refreshBusy) return;
+    if (!appState.backendConfigured) {
+      appState.online = false;
+      await renderDashboard(buildOfflineDashboard());
+      return;
+    }
     appState.refreshBusy = true;
 
     try {
@@ -1064,9 +1122,9 @@
       const cached = readCachedDashboard();
       if (cached && cached.dashboard) {
         await renderDashboard(cached.dashboard);
-        toast("Live-Daten aktuell nicht erreichbar.", "Anzeige aus lokalem Cache.");
+        // quiet fallback
       } else {
-        toast("Backend nicht erreichbar.", "Bitte API-URL pruefen oder spaeter erneut laden.");
+        // quiet offline mode on network failure
       }
       console.error("refreshDashboard failed", err);
     } finally {
@@ -1080,15 +1138,22 @@
       scores[metric.key] = Number($(`#m_${metric.key}`).value);
     });
 
-    return {
+    const payload = {
       month: monthKey(),
-      country: $("#voteCountry").value,
       scores,
     };
+    const override = $("#countryOverrideToggle");
+    const selected = $("#voteCountry").value;
+    const manual = override && override.checked && selected && selected !== appState.detectedCountry;
+    if (manual) {
+      payload.requestedCountry = selected;
+    }
+    return payload;
   }
 
   function payloadFingerprint(payload) {
-    return `${payload.month}|${payload.country}|${payload.scores.politics}|${payload.scores.environment}|${payload.scores.safety}|${payload.scores.social}`;
+    const countryKey = payload.requestedCountry || "AUTO";
+    return `${payload.month}|${countryKey}|${payload.scores.politics}|${payload.scores.environment}|${payload.scores.safety}|${payload.scores.social}`;
   }
 
   function enqueueVote(payload, reason) {
@@ -1171,6 +1236,9 @@
   }
 
   async function submitVote() {
+    if (!appState.backendConfigured) {
+      return;
+    }
     if (localMonthLocked()) {
       toast("Diesen Monat bereits abgestimmt.", "Lokale Sicherung aktiv.");
       return;
@@ -1179,6 +1247,11 @@
     const payload = buildVotePayload();
     try {
       await postVote(payload);
+      if (payload.requestedCountry) {
+        appState.countrySourceMode = "manual";
+      } else {
+        appState.countrySourceMode = "auto";
+      }
       setLocalMonthLock();
       toast("Abstimmung gespeichert.", "Danke fuer deine Stimme.");
       setActiveTab("statsTab");
@@ -1277,6 +1350,20 @@
       }
       await refreshDashboard();
     });
+
+    const overrideToggle = $("#countryOverrideToggle");
+    if (overrideToggle) {
+      overrideToggle.addEventListener("change", () => {
+        updateCountryUi();
+      });
+    }
+
+    const voteCountry = $("#voteCountry");
+    if (voteCountry) {
+      voteCountry.addEventListener("change", () => {
+        updateCountryUi();
+      });
+    }
 
     $("#geoRegionSelect").addEventListener("change", (event) => {
       const regionKey = event.target.value;
@@ -1396,6 +1483,7 @@
 
   async function init() {
     await loadRuntimeConfig();
+    appState.backendConfigured = Boolean(appState.apiBase);
     appState.pendingVotes = readPendingVotes();
 
     initTabs();
@@ -1403,6 +1491,7 @@
 
     renderMetricsSelect();
     renderCountrySelects();
+    updateCountryUi();
     initGeoSelectors();
     renderVoteGrid();
     initNav();
@@ -1410,9 +1499,21 @@
 
     runSmokeChecks();
     await initWorldMap();
+    if (appState.backendConfigured) {
+      try {
+        const who = await getWhoAmI();
+        appState.detectedCountry = who && who.detectedCountry ? who.detectedCountry : "OTHER";
+      } catch (_err) {
+        appState.detectedCountry = "OTHER";
+      }
+      renderCountrySelects();
+      updateCountryUi();
+    }
     await refreshDashboard();
     await flushVoteQueue();
-    initIntervals();
+    if (appState.backendConfigured) {
+      initIntervals();
+    }
   }
 
   init();

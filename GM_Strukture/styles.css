@@ -278,6 +278,29 @@ select {
 .stepTrack { height: 0.7rem; border-radius: 999px; background: #eceff3; overflow: hidden; }
 .stepFill { width: 25%; height: 100%; background: var(--accent); transition: width 220ms ease; }
 .questCountry { display: block; margin-bottom: var(--space-4); }
+.countryMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.overrideToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: var(--font-xs);
+}
+.overrideToggle input {
+  width: 1rem;
+  height: 1rem;
+}
+select:disabled {
+  background: #f3f5f7;
+  color: #8b95a3;
+  cursor: not-allowed;
+}
 .voteGrid { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
 .metric { border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-3); background: #fff; }
 .metricTop { display: flex; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2); }

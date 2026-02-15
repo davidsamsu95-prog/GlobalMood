@@ -193,7 +193,15 @@
             </div>
 
             <label class="questCountry">
-              <span class="label">Standort (frei gewaehlt)</span>
+              <span class="label">Land (automatisch erkannt, optional manuell)</span>
+              <div class="countryMeta">
+                <span class="pill" id="detectedCountryBadge">Erkannt: OTHER</span>
+                <span class="pill" id="countrySourceBadge">Quelle: auto</span>
+                <label class="overrideToggle">
+                  <input type="checkbox" id="countryOverrideToggle" />
+                  Manuell waehlen
+                </label>
+              </div>
               <select id="voteCountry"></select>
             </label>
 
@@ -211,6 +219,7 @@
                 <div class="methodTitle">Methodik (kurz)</div>
                 <ul class="methodList fineprint">
                   <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
+                  <li>Laender-Erkennung ueber Infrastruktur-Header (z. B. CDN), <strong>ohne IP-Speicherung</strong>.</li>
                   <li>Nur Skalenwerte 0-10 fuer vier Bereiche + Gesamtindex.</li>
                   <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
                   <li>Free-Tier-freundlicher Start mit klarer Skalierungsstrategie.</li>

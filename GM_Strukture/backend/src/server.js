@@ -88,7 +88,31 @@ function validMetric(metric) {
 }
 
 function validCountry(country) {
-  return typeof country === "string" && /^(?:[A-Z]{2,3}|OTHER|WORLD)$/.test(country);
+  return typeof country === "string" && /^(?:[A-Z]{2}|OTHER|WORLD)$/.test(country);
+}
+
+function normalizeIso2(raw) {
+  const val = String(raw || "").trim().toUpperCase().replace(/[^A-Z]/g, "");
+  if (!val || val === "XX") return "OTHER";
+  if (val.length !== 2) return "OTHER";
+  return val;
+}
+
+function detectCountryFromHeaders(req) {
+  const keys = [
+    "cf-ipcountry",
+    "x-vercel-ip-country",
+    "x-country-code",
+    "x-appengine-country",
+    "cloudfront-viewer-country",
+  ];
+  for (const key of keys) {
+    const value = req.headers[key];
+    if (value) {
+      return normalizeIso2(value);
+    }
+  }
+  return "OTHER";
 }
 
 function validMonth(month) {
@@ -97,15 +121,19 @@ function validMonth(month) {
 
 function parseVoteBody(body) {
   const month = String(body?.month || "");
-  const country = String(body?.country || "");
+  const requestedCountryRaw = body?.requestedCountry == null ? "" : String(body.requestedCountry || "");
   const scores = body?.scores || {};
 
   if (!validMonth(month)) {
     return { ok: false, error: "invalid_month" };
   }
 
-  if (!validCountry(country) || country === "WORLD") {
-    return { ok: false, error: "invalid_country" };
+  const requestedCountryCandidate = requestedCountryRaw.trim().toUpperCase();
+  let requestedCountry = "";
+  if (requestedCountryCandidate === "OTHER") {
+    requestedCountry = "OTHER";
+  } else if (/^[A-Z]{2}$/.test(requestedCountryCandidate)) {
+    requestedCountry = requestedCountryCandidate;
   }
 
   const politics = Number(scores.politics);
@@ -122,7 +150,7 @@ function parseVoteBody(body) {
   return {
     ok: true,
     month,
-    country,
+    requestedCountry,
     scores: { politics, environment, safety, social, global },
   };
 }
@@ -181,13 +209,22 @@ const voteLimiter = rateLimit({
 
 app.get("/api/v1/meta", (req, res) => {
   const deviceToken = getDeviceToken(req, res);
+  const detectedCountry = detectCountryFromHeaders(req);
   const payload = {
     serverTime: nowISO(),
     version: "api-1.0.0",
     minCountryN: MIN_COUNTRY_N,
     cookiePresent: Boolean(deviceToken),
+    detectedCountry,
   };
   res.json(payload);
+});
+
+app.get("/api/v1/whoami", (req, res) => {
+  const detectedCountry = detectCountryFromHeaders(req);
+  res.json({
+    detectedCountry,
+  });
 });
 
 app.get("/api/v1/status", (req, res) => {
@@ -302,13 +339,17 @@ app.post("/api/v1/votes", voteLimiter, voteBurstGuard, (req, res) => {
     return res.status(400).json({ error: parsed.error });
   }
 
+  const detectedCountry = detectCountryFromHeaders(req);
+  const country = parsed.requestedCountry || detectedCountry;
+  const countrySource = parsed.requestedCountry ? "manual" : "auto";
   const token = getDeviceToken(req, res);
   const deviceHash = hashToken(token);
 
   try {
     const result = gsb.recordVote({
       month: parsed.month,
-      country: parsed.country,
+      country,
+      countrySource,
       scores: parsed.scores,
       deviceHash,
       createdAt: nowISO(),
@@ -323,7 +364,9 @@ app.post("/api/v1/votes", voteLimiter, voteBurstGuard, (req, res) => {
     return res.status(201).json({
       ok: true,
       month: parsed.month,
-      country: parsed.country,
+      country,
+      countrySource,
+      detectedCountry,
       scores: parsed.scores,
     });
   } catch (err) {

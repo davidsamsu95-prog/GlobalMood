@@ -56,6 +56,16 @@ Hinweis:
 4. Vote abschicken und pruefen:
    - KPI/Charts aktualisieren sich.
    - Bei `429/503` erscheint Warteschlangen-Hinweis und Vote wird spaeter automatisch erneut gesendet.
+5. Country Auto-Detect pruefen:
+   - `GET /api/v1/whoami` liefert `detectedCountry`.
+   - Ohne manuelle Ueberschreibung wird Vote als `countrySource=auto` gespeichert.
+   - Bei manuell abweichender Auswahl wird `requestedCountry` gesendet und `countrySource=manual`.
+   - Snapshot/Leaderboard enthalten `n_manual` und `n_auto`.
+
+## Datenschutz-Hinweis (Country-Erkennung)
+- Country-Autodetect nutzt Header wie `CF-IPCountry`, `x-vercel-ip-country`, `x-country-code`, `x-appengine-country`, `cloudfront-viewer-country`.
+- Fehlende/unklare Werte (`XX`) werden als `OTHER` behandelt.
+- Es werden keine IP-Adressen gespeichert oder in der DB protokolliert.
 
 ## 5) Kostenwarnung
 - Keine bezahlte API ist integriert.

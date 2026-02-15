@@ -83,6 +83,8 @@ function weightedProfile(rows) {
 
   return {
     n: totalN,
+    n_manual: rows.reduce((sum, row) => sum + Number(row.n_manual || 0), 0),
+    n_auto: rows.reduce((sum, row) => sum + Number(row.n_auto || 0), 0),
     politics: Number((sums.politics / totalN).toFixed(2)),
     environment: Number((sums.environment / totalN).toFixed(2)),
     safety: Number((sums.safety / totalN).toFixed(2)),
@@ -111,6 +113,8 @@ function createDb({ databasePath, minCountryN = 5 }) {
       month TEXT NOT NULL,
       country TEXT NOT NULL,
       n INTEGER NOT NULL,
+      n_manual INTEGER NOT NULL DEFAULT 0,
+      n_auto INTEGER NOT NULL DEFAULT 0,
       sum_politics REAL NOT NULL,
       sum_environment REAL NOT NULL,
       sum_safety REAL NOT NULL,
@@ -124,6 +128,15 @@ function createDb({ databasePath, minCountryN = 5 }) {
     CREATE INDEX IF NOT EXISTS idx_agg_country ON agg_month_country(country);
   `);
 
+  // Lightweight runtime migration for existing DBs.
+  const aggCols = db.prepare(`PRAGMA table_info(agg_month_country)`).all().map((c) => c.name);
+  if (!aggCols.includes("n_manual")) {
+    db.exec(`ALTER TABLE agg_month_country ADD COLUMN n_manual INTEGER NOT NULL DEFAULT 0;`);
+  }
+  if (!aggCols.includes("n_auto")) {
+    db.exec(`ALTER TABLE agg_month_country ADD COLUMN n_auto INTEGER NOT NULL DEFAULT 0;`);
+  }
+
   const stmtInsertDeviceMonth = db.prepare(`
     INSERT INTO device_month (device_hash, month, created_at)
     VALUES (?, ?, ?)
@@ -131,12 +144,14 @@ function createDb({ databasePath, minCountryN = 5 }) {
 
   const stmtUpsertAgg = db.prepare(`
     INSERT INTO agg_month_country (
-      month, country, n,
+      month, country, n, n_manual, n_auto,
       sum_politics, sum_environment, sum_safety, sum_social, sum_global,
       updated_at
-    ) VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(month, country) DO UPDATE SET
       n = agg_month_country.n + 1,
+      n_manual = agg_month_country.n_manual + excluded.n_manual,
+      n_auto = agg_month_country.n_auto + excluded.n_auto,
       sum_politics = agg_month_country.sum_politics + excluded.sum_politics,
       sum_environment = agg_month_country.sum_environment + excluded.sum_environment,
       sum_safety = agg_month_country.sum_safety + excluded.sum_safety,
@@ -146,35 +161,39 @@ function createDb({ databasePath, minCountryN = 5 }) {
   `);
 
   const stmtRowsByMonth = db.prepare(`
-    SELECT month, country, n, sum_politics, sum_environment, sum_safety, sum_social, sum_global
+    SELECT month, country, n, n_manual, n_auto, sum_politics, sum_environment, sum_safety, sum_social, sum_global
     FROM agg_month_country
     WHERE month = ?
   `);
 
   const stmtRowsByMonths = db.prepare(`
-    SELECT month, country, n, sum_politics, sum_environment, sum_safety, sum_social, sum_global
+    SELECT month, country, n, n_manual, n_auto, sum_politics, sum_environment, sum_safety, sum_social, sum_global
     FROM agg_month_country
     WHERE month IN (SELECT value FROM json_each(?))
   `);
 
   const stmtCountryRowsByMonths = db.prepare(`
-    SELECT month, country, n, sum_politics, sum_environment, sum_safety, sum_social, sum_global
+    SELECT month, country, n, n_manual, n_auto, sum_politics, sum_environment, sum_safety, sum_social, sum_global
     FROM agg_month_country
     WHERE country = ? AND month IN (SELECT value FROM json_each(?))
   `);
 
   const stmtRowByMonthCountry = db.prepare(`
-    SELECT month, country, n, sum_politics, sum_environment, sum_safety, sum_social, sum_global
+    SELECT month, country, n, n_manual, n_auto, sum_politics, sum_environment, sum_safety, sum_social, sum_global
     FROM agg_month_country
     WHERE month = ? AND country = ?
   `);
 
-  const recordVoteTx = db.transaction(({ month, country, scores, deviceHash, createdAt }) => {
+  const recordVoteTx = db.transaction(({ month, country, countrySource, scores, deviceHash, createdAt }) => {
     stmtInsertDeviceMonth.run(deviceHash, month, createdAt);
+    const nManual = countrySource === "manual" ? 1 : 0;
+    const nAuto = countrySource === "manual" ? 0 : 1;
 
     stmtUpsertAgg.run(
       month,
       country,
+      nManual,
+      nAuto,
       scores.politics,
       scores.environment,
       scores.safety,
@@ -209,7 +228,7 @@ function createDb({ databasePath, minCountryN = 5 }) {
     const rows = rowsForMonth(month);
     const profile = weightedProfile(rows);
     if (!profile) {
-      return { country: "WORLD", n: 0, politics: 0, environment: 0, safety: 0, social: 0, global: 0 };
+      return { country: "WORLD", n: 0, n_manual: 0, n_auto: 0, politics: 0, environment: 0, safety: 0, social: 0, global: 0 };
     }
     return { country: "WORLD", ...profile };
   }
@@ -219,12 +238,14 @@ function createDb({ databasePath, minCountryN = 5 }) {
 
     const row = stmtRowByMonthCountry.get(month, country);
     if (!row) {
-      return { country, n: 0, politics: 0, environment: 0, safety: 0, social: 0, global: 0 };
+      return { country, n: 0, n_manual: 0, n_auto: 0, politics: 0, environment: 0, safety: 0, social: 0, global: 0 };
     }
 
     return {
       country,
       n: row.n,
+      n_manual: Number(row.n_manual || 0),
+      n_auto: Number(row.n_auto || 0),
       politics: valueFromRow(row, "politics") || 0,
       environment: valueFromRow(row, "environment") || 0,
       safety: valueFromRow(row, "safety") || 0,
@@ -273,18 +294,24 @@ function createDb({ databasePath, minCountryN = 5 }) {
     const rows = rowsForMonth(month);
     const worldValue = weightedValue(rows, metric);
     const totalVotes = rows.reduce((sum, row) => sum + row.n, 0);
+    const totalManual = rows.reduce((sum, row) => sum + Number(row.n_manual || 0), 0);
+    const totalAuto = rows.reduce((sum, row) => sum + Number(row.n_auto || 0), 0);
 
     return {
       month,
       metric,
       world: {
         n: totalVotes,
+        n_manual: totalManual,
+        n_auto: totalAuto,
         value: worldValue || 0,
       },
       countries: rows
         .map((row) => ({
           country: row.country,
           n: row.n,
+          n_manual: Number(row.n_manual || 0),
+          n_auto: Number(row.n_auto || 0),
           value: valueFromRow(row, metric) || 0,
         }))
         .sort((a, b) => b.value - a.value),
@@ -301,6 +328,11 @@ function createDb({ databasePath, minCountryN = 5 }) {
   function getLeaderboard(month, metric, limit = 10) {
     const currentRows = rowsForMonth(month);
     const prevRows = rowsForMonth(previousMonth(month));
+    const world = {
+      n: currentRows.reduce((sum, row) => sum + Number(row.n || 0), 0),
+      n_manual: currentRows.reduce((sum, row) => sum + Number(row.n_manual || 0), 0),
+      n_auto: currentRows.reduce((sum, row) => sum + Number(row.n_auto || 0), 0),
+    };
 
     const prevByCountry = prevRows.reduce((acc, row) => {
       acc[row.country] = row;
@@ -317,6 +349,8 @@ function createDb({ databasePath, minCountryN = 5 }) {
         return {
           country: row.country,
           n: row.n,
+          n_manual: Number(row.n_manual || 0),
+          n_auto: Number(row.n_auto || 0),
           value,
           delta: prevValue === null ? null : Number((value - prevValue).toFixed(2)),
         };
@@ -324,7 +358,7 @@ function createDb({ databasePath, minCountryN = 5 }) {
       .sort((a, b) => b.value - a.value)
       .slice(0, Math.max(1, Math.min(50, Number(limit) || 10)));
 
-    return { month, metric, rows };
+    return { month, metric, world, rows };
   }
 
   function getAggregate(country, metric, month) {
