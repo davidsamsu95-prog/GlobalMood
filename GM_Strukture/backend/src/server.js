@@ -5,17 +5,13 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const dotenv = require("dotenv");
-const { createDb, resolveDataDir, resolveDatabasePath, METRICS, monthKey, parseMonthKey } = require("./db");
+const { createDb, METRICS, monthKey, parseMonthKey } = require("./db");
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 const PORT = Number(process.env.PORT || 8787);
 const NODE_ENV = process.env.NODE_ENV || "development";
-const DATA_DIR = resolveDataDir(process.env.DATA_DIR);
-const DATABASE_PATH = resolveDatabasePath({
-  databasePath: process.env.DB_PATH || process.env.DATABASE_PATH || "",
-  dataDir: DATA_DIR,
-});
+const DATABASE_URL = String(process.env.DATABASE_URL || "").trim();
 const MIN_COUNTRY_N = Number(process.env.MIN_COUNTRY_N || 5);
 const READ_CACHE_TTL_MS = Number(process.env.READ_CACHE_TTL_MS || 15000);
 const VOTE_RATE_WINDOW_MS = Number(process.env.VOTE_RATE_WINDOW_MS || 60000);
@@ -36,11 +32,10 @@ const FRONTEND_ORIGIN = (process.env.FRONTEND_ORIGIN || "")
 const app = express();
 app.set("trust proxy", 1);
 
-const gsb = createDb({ databasePath: DATABASE_PATH, dataDir: DATA_DIR, minCountryN: MIN_COUNTRY_N });
-
 const bootTime = Date.now();
 const readCache = new Map();
 const burstTimestamps = [];
+let gsb = null;
 
 function nowISO() {
   return new Date().toISOString();
@@ -67,6 +62,12 @@ app.options("*", cors(corsOptions));
 
 app.use(express.json({ limit: "25kb" }));
 app.use(cookieParser());
+
+function asyncHandler(fn) {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
 
 function hashToken(token) {
   return crypto.createHash("sha256").update(token).digest("hex");
@@ -163,14 +164,14 @@ function cacheKey(name, params = {}) {
   return `${name}:${JSON.stringify(params)}`;
 }
 
-function getCached(name, params, producer) {
+async function getCached(name, params, producer) {
   const key = cacheKey(name, params);
   const item = readCache.get(key);
   if (item && Date.now() - item.ts < READ_CACHE_TTL_MS) {
     return { data: item.data, cached: true, ageMs: Date.now() - item.ts };
   }
 
-  const data = producer();
+  const data = await producer();
   readCache.set(key, { ts: Date.now(), data });
   return { data, cached: false, ageMs: 0 };
 }
@@ -226,9 +227,7 @@ app.get("/api/v1/meta", (req, res) => {
 
 app.get("/api/v1/whoami", (req, res) => {
   const detectedCountry = detectCountryFromHeaders(req);
-  res.json({
-    detectedCountry,
-  });
+  res.json({ detectedCountry });
 });
 
 app.get("/api/v1/status", (req, res) => {
@@ -249,108 +248,126 @@ app.get("/api/v1/status", (req, res) => {
   });
 });
 
-app.get("/api/v1/aggregate", (req, res) => {
-  const country = String(req.query.country || "WORLD").toUpperCase();
-  const metric = String(req.query.metric || "global").toLowerCase();
-  const month = String(req.query.month || monthKey());
+app.get(
+  "/api/v1/aggregate",
+  asyncHandler(async (req, res) => {
+    const country = String(req.query.country || "WORLD").toUpperCase();
+    const metric = String(req.query.metric || "global").toLowerCase();
+    const month = String(req.query.month || monthKey());
 
-  if (!validCountry(country)) return res.status(400).json({ error: "invalid_country" });
-  if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
-  if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
+    if (!validCountry(country)) return res.status(400).json({ error: "invalid_country" });
+    if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
+    if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
 
-  const cached = getCached("aggregate", { country, metric, month }, () => {
-    return gsb.getAggregate(country, metric, month);
-  });
+    const cached = await getCached("aggregate", { country, metric, month }, () => {
+      return gsb.getAggregate(country, metric, month);
+    });
 
-  res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
-});
+    res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
+  }),
+);
 
-app.get("/api/v1/snapshot", (req, res) => {
-  const month = String(req.query.month || monthKey());
-  const metric = String(req.query.metric || "global").toLowerCase();
+app.get(
+  "/api/v1/snapshot",
+  asyncHandler(async (req, res) => {
+    const month = String(req.query.month || monthKey());
+    const metric = String(req.query.metric || "global").toLowerCase();
 
-  if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
-  if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
+    if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
+    if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
 
-  const cached = getCached("snapshot", { month, metric }, () => {
-    return gsb.getSnapshot(month, metric);
-  });
+    const cached = await getCached("snapshot", { month, metric }, () => {
+      return gsb.getSnapshot(month, metric);
+    });
 
-  res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
-});
+    res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
+  }),
+);
 
-app.get("/api/v1/profile", (req, res) => {
-  const month = String(req.query.month || monthKey());
-  const country = String(req.query.country || "WORLD").toUpperCase();
+app.get(
+  "/api/v1/profile",
+  asyncHandler(async (req, res) => {
+    const month = String(req.query.month || monthKey());
+    const country = String(req.query.country || "WORLD").toUpperCase();
 
-  if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
-  if (!validCountry(country)) return res.status(400).json({ error: "invalid_country" });
+    if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
+    if (!validCountry(country)) return res.status(400).json({ error: "invalid_country" });
 
-  const cached = getCached("profile", { month, country }, () => {
-    return gsb.getCountryProfile(month, country);
-  });
+    const cached = await getCached("profile", { month, country }, () => {
+      return gsb.getCountryProfile(month, country);
+    });
 
-  res.json({ ...cached.data, month, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
-});
+    res.json({ ...cached.data, month, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
+  }),
+);
 
-app.get("/api/v1/leaderboard", (req, res) => {
-  const month = String(req.query.month || monthKey());
-  const metric = String(req.query.metric || "global").toLowerCase();
-  const limit = Number(req.query.limit || 10);
+app.get(
+  "/api/v1/leaderboard",
+  asyncHandler(async (req, res) => {
+    const month = String(req.query.month || monthKey());
+    const metric = String(req.query.metric || "global").toLowerCase();
+    const limit = Number(req.query.limit || 10);
 
-  if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
-  if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
+    if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
+    if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
 
-  const cached = getCached("leaderboard", { month, metric, limit }, () => {
-    return gsb.getLeaderboard(month, metric, limit);
-  });
+    const cached = await getCached("leaderboard", { month, metric, limit }, () => {
+      return gsb.getLeaderboard(month, metric, limit);
+    });
 
-  res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
-});
+    res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
+  }),
+);
 
-app.get("/api/v1/dashboard", (req, res) => {
-  const month = String(req.query.month || monthKey());
-  const metric = String(req.query.metric || "global").toLowerCase();
-  const country = String(req.query.country || "WORLD").toUpperCase();
-  const limit = Number(req.query.limit || 10);
+app.get(
+  "/api/v1/dashboard",
+  asyncHandler(async (req, res) => {
+    const month = String(req.query.month || monthKey());
+    const metric = String(req.query.metric || "global").toLowerCase();
+    const country = String(req.query.country || "WORLD").toUpperCase();
+    const limit = Number(req.query.limit || 10);
 
-  if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
-  if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
-  if (!validCountry(country)) return res.status(400).json({ error: "invalid_country" });
+    if (!validMonth(month)) return res.status(400).json({ error: "invalid_month" });
+    if (!validMetric(metric)) return res.status(400).json({ error: "invalid_metric" });
+    if (!validCountry(country)) return res.status(400).json({ error: "invalid_country" });
 
-  const cached = getCached("dashboard", { month, metric, country, limit }, () => {
-    const dashboard = gsb.getDashboard({ month, metric, country, leaderboardLimit: limit });
-    return {
-      ...dashboard,
-      meta: {
-        serverTime: nowISO(),
-        version: "api-1.0.0",
-        minCountryN: MIN_COUNTRY_N,
-      },
-      status: {
-        voteBusy: burstTimestamps.length >= Math.floor(VOTE_BURST_MAX * 0.8),
-        readCacheTtlMs: READ_CACHE_TTL_MS,
-      },
-    };
-  });
+    const cached = await getCached("dashboard", { month, metric, country, limit }, async () => {
+      const dashboard = await gsb.getDashboard({ month, metric, country, leaderboardLimit: limit });
+      return {
+        ...dashboard,
+        meta: {
+          serverTime: nowISO(),
+          version: "api-1.0.0",
+          minCountryN: MIN_COUNTRY_N,
+        },
+        status: {
+          voteBusy: burstTimestamps.length >= Math.floor(VOTE_BURST_MAX * 0.8),
+          readCacheTtlMs: READ_CACHE_TTL_MS,
+        },
+      };
+    });
 
-  res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
-});
+    res.json({ ...cached.data, _cache: { hit: cached.cached, ageMs: cached.ageMs } });
+  }),
+);
 
-app.post("/api/v1/votes", voteLimiter, voteBurstGuard, (req, res) => {
-  const parsed = parseVoteBody(req.body);
-  if (!parsed.ok) {
-    return res.status(400).json({ error: parsed.error });
-  }
+app.post(
+  "/api/v1/votes",
+  voteLimiter,
+  voteBurstGuard,
+  asyncHandler(async (req, res) => {
+    const parsed = parseVoteBody(req.body);
+    if (!parsed.ok) {
+      return res.status(400).json({ error: parsed.error });
+    }
 
-  const detectedCountry = detectCountryFromHeaders(req);
-  const country = parsed.requestedCountry || detectedCountry;
-  const countrySource = parsed.requestedCountry ? "manual" : "auto";
-  const token = getDeviceToken(req, res);
-  const deviceHash = hashToken(token);
+    const detectedCountry = detectCountryFromHeaders(req);
+    const country = parsed.requestedCountry || detectedCountry;
+    const countrySource = parsed.requestedCountry ? "manual" : "auto";
+    const token = getDeviceToken(req, res);
+    const deviceHash = hashToken(token);
 
-  try {
-    const result = gsb.recordVote({
+    const result = await gsb.recordVote({
       month: parsed.month,
       country,
       countrySource,
@@ -373,11 +390,8 @@ app.post("/api/v1/votes", voteLimiter, voteBurstGuard, (req, res) => {
       detectedCountry,
       scores: parsed.scores,
     });
-  } catch (err) {
-    console.error("POST /votes failed", err);
-    return res.status(500).json({ error: "internal_error" });
-  }
-});
+  }),
+);
 
 app.get("/healthz", (req, res) => {
   res.json({ ok: true, time: nowISO() });
@@ -389,8 +403,24 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "internal_error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`GSB backend listening on http://localhost:${PORT}`);
-  console.log(`DATA_DIR: ${DATA_DIR}`);
-  console.log(`DB: ${path.resolve(DATABASE_PATH)}`);
+async function bootstrap() {
+  if (!DATABASE_URL) {
+    throw new Error("DATABASE_URL is missing");
+  }
+
+  gsb = await createDb({
+    databaseUrl: DATABASE_URL,
+    minCountryN: MIN_COUNTRY_N,
+  });
+
+  app.listen(PORT, () => {
+    console.log(`GSB backend listening on http://localhost:${PORT}`);
+    console.log(`NODE_ENV: ${NODE_ENV}`);
+    console.log("DB: postgres (DATABASE_URL)");
+  });
+}
+
+bootstrap().catch((err) => {
+  console.error("Backend bootstrap failed", err);
+  process.exit(1);
 });

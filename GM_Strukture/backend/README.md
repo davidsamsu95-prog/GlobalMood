@@ -5,15 +5,16 @@ Node/Express API fuer das Globale Stimmungsbarometer.
 ## Features
 - Anonyme Monatsabstimmung ohne Accounts
 - 1 Stimme pro Geraet und Monat (Cookie-Hash, kein IP-Logging in DB)
-- SQLite als kostenfreie Start-DB
+- PostgreSQL via `DATABASE_URL` (Render Postgres)
 - Read-Cache fuer stabile Statistik-Endpunkte bei hoher Last
 - Voting-Rate-Limits und Burst-Schutz
 
 ## Setup lokal
 1. `cd backend`
 2. `cp .env.example .env`
-3. `npm install`
-4. `npm run dev`
+3. PostgreSQL lokal starten und `DATABASE_URL` setzen
+4. `npm install`
+5. `npm run dev`
 
 API laeuft dann auf `http://localhost:8787`.
 
@@ -27,20 +28,7 @@ API laeuft dann auf `http://localhost:8787`.
 - `GET /api/v1/leaderboard?month=YYYY-MM&metric=global&limit=10`
 - `POST /api/v1/votes`
 
-## Kostenlos deployen (Start)
-
-### Backend
-- Render Free Web Service oder Fly.io Free Tier
-- Deploy direkt aus GitHub-Repo
-- Env Vars aus `.env.example` setzen
-- Alternativ direkt Blueprint aus `render.yaml` erzeugen (`New +` -> `Blueprint`)
-
-### Frontend
-- GitHub Pages oder Cloudflare Pages
-- In `config.json` `API_BASE` auf deine Backend-URL setzen
-
-## Skalierungsstrategie bei Lastspitzen
-- Read-Endpunkte bedienen aus kurzen In-Memory-Cache-Fenstern
-- Voting-Endpunkt separat limitiert (Rate-Limit + Burst-Guard)
-- Frontend kann Votes lokal puffern und spaeter erneut senden
-- Statistik bleibt abrufbar, auch wenn Voting kurzfristig gebremst ist
+## Render Deploy
+- Service per `render.yaml` deployen (`New +` -> `Blueprint`)
+- `DATABASE_URL` wird aus Render Postgres gebunden
+- In `config.json` vom Frontend `API_BASE` auf Backend-URL setzen

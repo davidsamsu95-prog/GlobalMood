@@ -11,8 +11,10 @@ services:
         value: production
       - key: FRONTEND_ORIGIN
         value: https://davidsamsu95-prog.github.io
-      - key: DB_PATH
-        value: /var/data/data.sqlite
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gsb-postgres
+          property: connectionString
       - key: MIN_COUNTRY_N
         value: "30"
       - key: READ_CACHE_TTL_MS
@@ -33,3 +35,9 @@ services:
         value: none
       - key: COOKIE_SECURE
         value: "true"
+
+databases:
+  - name: gsb-postgres
+    databaseName: gsb
+    user: gsb
+    plan: free
