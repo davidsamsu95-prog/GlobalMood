@@ -117,13 +117,22 @@ h1 { font-size: var(--font-md); margin: 0; line-height: 1.2; }
   align-self: flex-end;
 }
 .langSelect {
-  min-height: 2.15rem;
-  width: 4.2rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--text);
-  padding: 0 0.45rem;
+  position: absolute;
+  left: clamp(0.5rem, 2vw, 1rem);
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  z-index: 35;
+  min-height: 1.7rem !important;
+  width: 3.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(196, 207, 222, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+  color: #2f3f54;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0 0.3rem;
+  box-shadow: 0 1px 5px rgba(15, 31, 52, 0.08);
 }
 .modeToggle {
   display: inline-flex;
@@ -763,7 +772,7 @@ body.modalOpen {
 }
 
 @media (max-width: 1020px) {
-  .topbar { position: static; }
+  .topbar { position: relative; }
 }
 
 @media (max-width: 760px) {
@@ -808,6 +817,14 @@ body.modalOpen {
   .modalCard {
     top: 3vh;
     width: calc(100vw - 1rem);
+  }
+  .langSelect {
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    min-height: 1.6rem !important;
+    width: 3rem;
+    font-size: 0.7rem;
   }
 }
 
