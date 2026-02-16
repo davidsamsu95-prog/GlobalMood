@@ -26,11 +26,13 @@ jobs:
       - name: Build static artifact
         run: |
           mkdir -p dist
-          cp GlobalMood.html dist/index.html
+          cp index.html dist/index.html
           cp styles.css dist/styles.css
           cp app.js dist/app.js
           cp config.json dist/config.json
           cp config.js dist/config.js
+          cp annual_baseline.json dist/annual_baseline.json
+          if [ -d assets ]; then cp -r assets dist/assets; fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
