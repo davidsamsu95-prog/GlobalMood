@@ -6,11 +6,17 @@ services:
     buildCommand: npm install
     startCommand: node src/server.js
     plan: free
+    disk:
+      name: gm-data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: FRONTEND_ORIGIN
         value: https://davidsamsu95-prog.github.io
+      - key: DATA_DIR
+        value: /var/data
       - key: DB_PATH
         value: /var/data/data.sqlite
       - key: MIN_COUNTRY_N

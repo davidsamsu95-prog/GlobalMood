@@ -5,13 +5,17 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const dotenv = require("dotenv");
-const { createDb, METRICS, monthKey, parseMonthKey } = require("./db");
+const { createDb, resolveDataDir, resolveDatabasePath, METRICS, monthKey, parseMonthKey } = require("./db");
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 const PORT = Number(process.env.PORT || 8787);
 const NODE_ENV = process.env.NODE_ENV || "development";
-const DATABASE_PATH = process.env.DB_PATH || process.env.DATABASE_PATH || "./data/gsb.sqlite";
+const DATA_DIR = resolveDataDir(process.env.DATA_DIR);
+const DATABASE_PATH = resolveDatabasePath({
+  databasePath: process.env.DB_PATH || process.env.DATABASE_PATH || "",
+  dataDir: DATA_DIR,
+});
 const MIN_COUNTRY_N = Number(process.env.MIN_COUNTRY_N || 5);
 const READ_CACHE_TTL_MS = Number(process.env.READ_CACHE_TTL_MS || 15000);
 const VOTE_RATE_WINDOW_MS = Number(process.env.VOTE_RATE_WINDOW_MS || 60000);
@@ -32,7 +36,7 @@ const FRONTEND_ORIGIN = (process.env.FRONTEND_ORIGIN || "")
 const app = express();
 app.set("trust proxy", 1);
 
-const gsb = createDb({ databasePath: DATABASE_PATH, minCountryN: MIN_COUNTRY_N });
+const gsb = createDb({ databasePath: DATABASE_PATH, dataDir: DATA_DIR, minCountryN: MIN_COUNTRY_N });
 
 const bootTime = Date.now();
 const readCache = new Map();
@@ -387,5 +391,6 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`GSB backend listening on http://localhost:${PORT}`);
+  console.log(`DATA_DIR: ${DATA_DIR}`);
   console.log(`DB: ${path.resolve(DATABASE_PATH)}`);
 });

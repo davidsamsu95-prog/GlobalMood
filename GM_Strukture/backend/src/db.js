@@ -3,6 +3,7 @@ const path = require("path");
 const Database = require("better-sqlite3");
 
 const METRICS = ["global", "politics", "environment", "safety", "social"];
+const DEFAULT_DATA_DIR = path.join(__dirname, "..", "data");
 
 function monthKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
@@ -36,6 +37,21 @@ function ensureParentDir(filePath) {
   if (!fs.existsSync(parent)) {
     fs.mkdirSync(parent, { recursive: true });
   }
+}
+
+function resolveDataDir(explicitDataDir) {
+  const raw = explicitDataDir || process.env.DATA_DIR || DEFAULT_DATA_DIR;
+  const resolved = path.resolve(raw);
+  if (!fs.existsSync(resolved)) {
+    fs.mkdirSync(resolved, { recursive: true });
+  }
+  return resolved;
+}
+
+function resolveDatabasePath({ databasePath, dataDir } = {}) {
+  if (databasePath) return path.resolve(databasePath);
+  const baseDir = resolveDataDir(dataDir);
+  return path.join(baseDir, "data.sqlite");
 }
 
 function valueFromRow(row, metric) {
@@ -93,8 +109,8 @@ function weightedProfile(rows) {
   };
 }
 
-function createDb({ databasePath, minCountryN = 5 }) {
-  const absolutePath = path.resolve(databasePath);
+function createDb({ databasePath, dataDir, minCountryN = 5 }) {
+  const absolutePath = resolveDatabasePath({ databasePath, dataDir });
   ensureParentDir(absolutePath);
 
   const db = new Database(absolutePath);
@@ -420,6 +436,8 @@ function createDb({ databasePath, minCountryN = 5 }) {
 
 module.exports = {
   createDb,
+  resolveDataDir,
+  resolveDatabasePath,
   METRICS,
   monthKey,
   parseMonthKey,
