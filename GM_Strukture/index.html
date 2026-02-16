@@ -16,7 +16,14 @@
     <header class="topbar">
       <div class="brand" aria-label="GlobalMood">
         <span class="brandWord">Global</span>
-        <div class="logo" aria-hidden="true"></div>
+        <div class="logo" aria-hidden="true">
+          <img
+            class="logoImg"
+            src="assets/global-mood-icon-v01.png"
+            alt=""
+            onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='/GlobalMood/assets/global-mood-icon-v01.png';}else if(!this.dataset.fallback2){this.dataset.fallback2='1';this.src='/assets/global-mood-icon-v01.png';}"
+          />
+        </div>
         <span class="brandWord">Mood</span>
       </div>
 

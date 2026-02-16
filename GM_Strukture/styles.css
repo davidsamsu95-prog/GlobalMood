@@ -97,8 +97,14 @@ button:focus-visible, select:focus-visible, input:focus-visible, .chip:focus-vis
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.45rem;
-  background: url("assets/global-mood-icon-v01.png") center / contain no-repeat;
+  overflow: hidden;
   border: 0;
+}
+.logoImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 h1 { font-size: var(--font-md); margin: 0; line-height: 1.2; }
 .sub { display: block; color: var(--muted); font-size: var(--font-xs); }
