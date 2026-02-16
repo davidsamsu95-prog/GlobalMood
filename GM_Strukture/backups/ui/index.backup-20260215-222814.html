@@ -15,73 +15,62 @@
   <div class="wrap">
     <header class="topbar">
       <div class="brand" aria-label="GlobalMood">
-        <span class="brandWord">Global</span>
         <div class="logo" aria-hidden="true"></div>
-        <span class="brandWord">Mood</span>
+        <div>
+          <h1>Global Mood</h1>
+        </div>
       </div>
 
       <nav class="nav" aria-label="Navigation">
-        <button class="chip chipIcon" data-scroll="#stats" type="button" aria-label="Weltstatistik">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm7.9 9h-3.1a15.8 15.8 0 00-1.3-5A8 8 0 0119.9 11zM12 4.1c.8 1 1.8 3 2.3 6H9.7c.5-3 1.5-5 2.3-6zM8.5 6a15.8 15.8 0 00-1.3 5H4.1A8 8 0 018.5 6zM4.1 13h3.1a15.8 15.8 0 001.3 5A8 8 0 014.1 13zm7.9 6c-.8-1-1.8-3-2.3-6h4.6c-.5 3-1.5 5-2.3 6zm3.5-1a15.8 15.8 0 001.3-5h3.1a8 8 0 01-4.4 5z"/></svg>
-        </button>
-        <button class="chip chipIcon" data-scroll="#vote" type="button" aria-label="Abstimmen">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v3H3V4zm2 5h14v11H5V9zm3 3v5h2v-5H8zm4-2v7h2v-7h-2z"/></svg>
-        </button>
-        <button class="chip chipIcon" data-scroll="#method" type="button" aria-label="Methodik">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2.1.7a7.8 7.8 0 01-.5 1.3l1.1 1.9-1.4 1.4-1.9-1.1a7.8 7.8 0 01-1.3.5L14 21h-4l-.7-2.1a7.8 7.8 0 01-1.3-.5l-1.9 1.1-1.4-1.4 1.1-1.9a7.8 7.8 0 01-.5-1.3L3 12l2.1-.7a7.8 7.8 0 01.5-1.3L4.5 8.1l1.4-1.4 1.9 1.1a7.8 7.8 0 011.3-.5L10 3h4l.7 2.1a7.8 7.8 0 011.3.5l1.9-1.1 1.4 1.4-1.1 1.9c.2.4.4.9.5 1.3L21 12z"/></svg>
-        </button>
-        <select id="langSelect" class="langSelect" aria-label="Sprache waehlen">
-          <option value="de">DE</option>
-          <option value="en">EN</option>
-        </select>
+        <button class="chip" data-scroll="#vote" type="button">Abstimmen</button>
+        <button class="chip" data-scroll="#stats" type="button">Weltstatistik</button>
+        <button class="chip" data-scroll="#method" type="button">Methodik</button>
+        <button class="chip primary" id="shareBtn" type="button">Teilen</button>
       </nav>
     </header>
 
     <main class="tabPanels">
       <section class="tabPanel active" id="statsTab" role="tabpanel" aria-label="Weltstatistik">
         <section id="stats" class="statsIntro" aria-labelledby="statsTitle">
-            <div class="statsHead">
-              <h2 id="statsTitle">Weltstatistik</h2>
-              <div class="hint" id="liveHint">Live-Statistik aus API (mit lokalem Cache-Fallback).</div>
-            </div>
+          <div class="statsHead">
+            <h2 id="statsTitle">Weltstatistik</h2>
+            <div class="hint" id="liveHint">Live-Statistik aus API (mit lokalem Cache-Fallback).</div>
+          </div>
 
           <section class="worldSection" aria-label="Weltkarte nach Mood-Level">
             <div class="worldHead">
-              <div class="label" id="worldMapRegionLabel">Weltkarte nach Regionen</div>
+              <div class="label">Weltkarte nach Regionen</div>
               <div class="worldMeta">
                 <div class="worldLegend">
-                  <span id="legendLow"><i class="c low"></i>niedrig</span>
-                  <span id="legendMid"><i class="c mid"></i>mittel</span>
-                  <span id="legendHigh"><i class="c high"></i>hoch</span>
+                  <span><i class="c low"></i>niedrig</span>
+                  <span><i class="c mid"></i>mittel</span>
+                  <span><i class="c high"></i>hoch</span>
+                </div>
+                <div class="mapStyleSwitch" role="group" aria-label="Kartenstil">
+                  <button class="styleBtn active" type="button" data-map-style="subtle">Subtle</button>
+                  <button class="styleBtn" type="button" data-map-style="playful">Playful</button>
                 </div>
               </div>
             </div>
-            <div class="worldMapWrap map-card" id="worldMapCard" data-map-style="playful">
+            <div class="worldMapWrap map-card" id="worldMapCard" data-map-style="subtle">
               <div class="map-ambient" aria-hidden="true"></div>
               <svg id="worldMapSvg" viewBox="0 0 960 480" aria-label="Globale Mood-Karte"></svg>
-              <div class="mapModeDock">
-                <div class="modeToggle" role="group" aria-label="Datenmodus">
-                <button class="chip active" id="modeMonthlyBtn" type="button">Monatlich</button>
-                <button class="chip" id="modeAnnualBtn" type="button">Jaehrlich</button>
-              </div>
-              <button class="chip" id="annualSourcesBtn" type="button" hidden>Quellen</button>
-            </div>
             </div>
             <div class="geoControls" aria-label="Regionenauswahl">
               <label>
-                <span class="label" id="geoRegionLabel">Kontinent</span>
+                <span class="label">Kontinent</span>
                 <select id="geoRegionSelect"></select>
               </label>
               <label>
-                <span class="label" id="geoCountryLabel">Land</span>
+                <span class="label">Land</span>
                 <select id="geoCountrySelect"></select>
               </label>
               <label>
-                <span class="label" id="geoStateLabel">Region/Bundesland</span>
+                <span class="label">Region/Bundesland</span>
                 <select id="geoStateSelect"></select>
               </label>
               <label>
-                <span class="label" id="geoCityLabel">Stadt</span>
+                <span class="label">Stadt</span>
                 <select id="geoCitySelect"></select>
               </label>
               <button class="chip" id="geoResetBtn" type="button">Karte zuruecksetzen</button>
@@ -91,7 +80,7 @@
 
           <section class="heroPanel" aria-label="Global Mood Index">
             <div class="heroMain">
-              <div class="label" id="globalMoodLabel">Global Mood Index</div>
+              <div class="label">Global Mood Index</div>
               <div class="heroNumber" id="globalIndex">-</div>
               <div class="moodMeter" role="img" aria-label="Stimmungsbarometer von 0 bis 10">
                 <div class="moodScale">
@@ -156,11 +145,11 @@
           <div class="cardBd">
             <div class="filters">
               <label>
-                <span class="label" id="metricLabel">Metrik</span>
+                <span class="label">Metrik</span>
                 <select id="metricSelect"></select>
               </label>
               <label>
-                <span class="label" id="countryFilterLabel">Region / Land</span>
+                <span class="label">Region / Land</span>
                 <select id="countrySelect"></select>
               </label>
             </div>
@@ -229,6 +218,23 @@
 
             <div class="fineprint" id="cooldownNote"></div>
 
+            <section class="card methodCard" id="method" aria-label="Methodik">
+              <div class="cardBd">
+                <div class="methodTitle">Methodik (kurz)</div>
+                <ul class="methodList fineprint">
+                  <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
+                  <li>Laender-Erkennung ueber Infrastruktur-Header (z. B. CDN), <strong>ohne IP-Speicherung</strong>.</li>
+                  <li>Nur Skalenwerte 0-10 fuer vier Bereiche + Gesamtindex.</li>
+                  <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
+                  <li>Free-Tier-freundlicher Start mit klarer Skalierungsstrategie.</li>
+                </ul>
+                <div class="fineprint tags">
+                  <span class="pill">#GlobalMoodIndex</span>
+                  <span class="pill">#WorldPulse</span>
+                  <span class="pill">#Stimmungsbarometer</span>
+                </div>
+              </div>
+            </section>
           </div>
         </aside>
       </section>
@@ -244,40 +250,6 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="modalWrap" id="methodModal" aria-hidden="true">
-    <div class="modalBackdrop" data-close-method-modal="true"></div>
-    <section class="modalCard" role="dialog" aria-modal="true" aria-labelledby="methodTitle" id="method">
-      <div class="modalHd">
-        <h2 id="methodTitle">Methodik (kurz)</h2>
-        <button class="chip" id="methodCloseBtn" type="button">Schliessen</button>
-      </div>
-      <div class="modalBd">
-        <ul class="methodList fineprint">
-          <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
-          <li>Laender-Erkennung ueber Infrastruktur-Header (z. B. CDN), <strong>ohne IP-Speicherung</strong>.</li>
-          <li>Nur Skalenwerte 0-10 fuer vier Bereiche + Gesamtindex.</li>
-          <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
-          <li>Free-Tier-freundlicher Start mit klarer Skalierungsstrategie.</li>
-        </ul>
-        <div class="fineprint tags">
-          <span class="pill">#GlobalMoodIndex</span>
-          <span class="pill">#WorldPulse</span>
-          <span class="pill">#Stimmungsbarometer</span>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <div class="modalWrap" id="sourceModal" aria-hidden="true">
-    <div class="modalBackdrop" data-close-source-modal="true"></div>
-    <section class="modalCard sourceModalCard" role="dialog" aria-modal="true" aria-labelledby="sourceTitle">
-      <div class="modalHd">
-        <h2 id="sourceTitle">Jahresdaten: Quellen</h2>
-        <button class="chip" id="sourceCloseBtn" type="button">Schliessen</button>
-      </div>
-      <div class="modalBd" id="sourceModalBody"></div>
-    </section>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>

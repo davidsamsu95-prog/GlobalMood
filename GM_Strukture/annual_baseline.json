@@ -1,0 +1,35 @@
+{
+  "year": 2025,
+  "updatedAt": "2026-01-15T00:00:00Z",
+  "sourceNote": "Kuratierter Jahres-Baseline-Stand fuer Kartenvergleich. Werte sind auf 0-100 normalisiert und im Frontend auf 0-10 skaliert.",
+  "sources": [
+    {
+      "title": "World Happiness Report",
+      "url": "https://worldhappiness.report/"
+    },
+    {
+      "title": "OECD Better Life Index",
+      "url": "https://www.oecdbetterlifeindex.org/"
+    },
+    {
+      "title": "UN Human Development Reports",
+      "url": "https://hdr.undp.org/"
+    }
+  ],
+  "countries": [
+    { "country": "DE", "value": 74, "n": 1200000, "delta": 0.3, "metrics": { "politics": 68, "environment": 73, "safety": 79, "social": 76 } },
+    { "country": "AT", "value": 76, "n": 380000, "delta": 0.2, "metrics": { "politics": 70, "environment": 75, "safety": 81, "social": 77 } },
+    { "country": "CH", "value": 82, "n": 290000, "delta": 0.4, "metrics": { "politics": 79, "environment": 80, "safety": 86, "social": 83 } },
+    { "country": "FR", "value": 71, "n": 980000, "delta": -0.1, "metrics": { "politics": 63, "environment": 72, "safety": 73, "social": 75 } },
+    { "country": "US", "value": 69, "n": 2100000, "delta": -0.4, "metrics": { "politics": 58, "environment": 66, "safety": 72, "social": 70 } },
+    { "country": "BR", "value": 62, "n": 1500000, "delta": 0.5, "metrics": { "politics": 55, "environment": 61, "safety": 57, "social": 66 } },
+    { "country": "IN", "value": 60, "n": 2500000, "delta": 0.6, "metrics": { "politics": 57, "environment": 56, "safety": 62, "social": 65 } },
+    { "country": "JP", "value": 73, "n": 910000, "delta": 0.1, "metrics": { "politics": 66, "environment": 70, "safety": 82, "social": 74 } },
+    { "country": "ZA", "value": 54, "n": 460000, "delta": -0.3, "metrics": { "politics": 50, "environment": 52, "safety": 48, "social": 57 } },
+    { "country": "AU", "value": 78, "n": 420000, "delta": 0.2, "metrics": { "politics": 71, "environment": 77, "safety": 84, "social": 80 } },
+    { "country": "NG", "value": 52, "n": 1100000, "delta": 0.4, "metrics": { "politics": 46, "environment": 49, "safety": 44, "social": 58 } },
+    { "country": "UA", "value": 48, "n": 700000, "delta": -0.8, "metrics": { "politics": 39, "environment": 47, "safety": 38, "social": 55 } },
+    { "country": "IL", "value": 64, "n": 330000, "delta": -0.5, "metrics": { "politics": 53, "environment": 63, "safety": 59, "social": 69 } },
+    { "country": "PS", "value": 45, "n": 280000, "delta": -0.7, "metrics": { "politics": 37, "environment": 43, "safety": 34, "social": 52 } }
+  ]
+}

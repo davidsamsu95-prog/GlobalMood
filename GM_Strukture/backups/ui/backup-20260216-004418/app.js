@@ -204,7 +204,6 @@
   const DASHBOARD_CACHE_KEY = "gm_dashboard_cache_v1";
   const PENDING_VOTES_KEY = "gm_pending_votes_v1";
   const LOCAL_MONTH_LOCK_KEY = "gm_local_month_lock_v1";
-  const UI_LANG_KEY = "gm_ui_lang_v1";
   const ANNUAL_BASELINE_URL = "annual_baseline.json";
 
   const CONFIG = {
@@ -244,242 +243,10 @@
     tabAnimTimer: null,
     dataMode: "monthly",
     annualBaseline: null,
-    uiLang: "de",
-    uiLocale: "de-DE",
-  };
-
-  const I18N = {
-    de: {
-      langName: "Deutsch",
-      nav: { stats: "Weltstatistik", vote: "Abstimmen", method: "Methodik", switchView: "Ansicht wechseln" },
-      stats: {
-        title: "Weltstatistik",
-        mapByRegion: "Weltkarte nach Regionen",
-        legendLow: "niedrig",
-        legendMid: "mittel",
-        legendHigh: "hoch",
-        geoRegion: "Kontinent",
-        geoCountry: "Land",
-        geoState: "Region/Bundesland",
-        geoCity: "Stadt",
-        geoReset: "Karte zuruecksetzen",
-        geoAllContinents: "Alle Kontinente",
-        geoAllCountries: "Alle Laender",
-        geoAllRegions: "Alle Regionen",
-        geoAllCities: "Alle Staedte",
-        selectionPrefix: "Auswahl:",
-        selectionWorld: "Weltweit",
-        selectionAllCountries: "Alle Laender",
-        metric: "Metrik",
-        regionCountry: "Region / Land",
-        worldAggregate: "Weltweit (Aggregat)",
-        otherCountry: "Anderes / nicht genannt",
-        trendPrefix: "Trend:",
-        trendSinceLastMonth: "seit letztem Monat",
-        trendNoPrev: "n/a (Vorperiode fehlt)",
-        votesLabel: "Stimmen:",
-        sampleSmall: "Kleine Stichprobe ({count} Stimmen)",
-        sampleGrowing: "Stichprobe waechst ({count} Stimmen)",
-        noAnnualRows: "Keine Jahreswerte fuer Laender vorhanden.",
-        noMonthlyRows: "Noch keine Laender mit mindestens {min} Stimmen im aktuellen Monat.",
-      },
-      modes: {
-        monthly: "Monatlich",
-        annual: "Jaehrlich",
-        sources: "Quellen",
-        annualHint: "Offizielle Jahresdaten {year} (statisch, kuratiert)",
-        annualLoadFailed: "Jahresdaten konnten nicht geladen werden.",
-      },
-      live: {
-        liveApi: "Live-API",
-        localCache: "lokaler Cache",
-        busy: "Voting gerade ausgelastet",
-        queue: "Warteschlange: {count} Vote(s)",
-      },
-      vote: {
-        step: "Schritt {current} von {total}",
-        detected: "Erkannt: {country}",
-        source: "Quelle: {mode}",
-        manualToggle: "Manuell waehlen",
-      },
-      cooldown: {
-        note: "Hinweis:",
-        queueActive: "Warteschlange aktiv:",
-        principle: "Prinzip:",
-        already: "Ihr habt diesen Monat bereits abgestimmt (lokale Sicherung). Naechste Abgabe ab",
-        queueText: "{count} Vote(s) werden automatisch erneut gesendet. Bitte nichts doppelt absenden.",
-        busy: "Statistik bleibt abrufbar. Voting kann bei Last kurz verzoegert sein.",
-        principleText: "anonym & aggregiert. 1 Stimme pro Geraet und Monat (serverseitig abgesichert).",
-      },
-      toast: {
-        random: "Zufallswerte gesetzt.",
-        bufferedSent: "Gepufferter Vote erfolgreich gesendet.",
-        month: "Monat {month}",
-        votedAlready: "Diesen Monat bereits abgestimmt.",
-        localGuard: "Lokale Sicherung aktiv.",
-        voteSaved: "Abstimmung gespeichert.",
-        voteThanks: "Danke fuer deine Stimme.",
-        serverRule: "Serverseitige Monatsregel hat gegriffen.",
-        busyBuffered: "Voting ausgelastet - Stimme gepuffert.",
-        autoRetry: "Die App sendet automatisch nach.",
-        voteFailed: "Abstimmung fehlgeschlagen.",
-        retryLater: "Bitte spaeter erneut versuchen.",
-        shared: "Geteilt.",
-        linkCopied: "Link kopiert.",
-        shareUnavailable: "Teilen nicht verfuegbar.",
-        shareCanceled: "Teilen abgebrochen.",
-      },
-      charts: { noData: "keine Daten", trendLabel: "Trend", profileLabel: "Profil", votes: "Stimmen" },
-      metrics: {
-        global: "Gesamtzufriedenheit",
-        politics: "Politik",
-        environment: "Umwelt",
-        safety: "Sicherheit",
-        social: "Soziales",
-      },
-      metricDesc: {
-        politics: "Wie zufrieden seid Ihr mit der politischen Gesamtsituation?",
-        environment: "Wie erlebt Ihr Natur, Klima, Luft, Wasser, Zukunftsfahigkeit?",
-        safety: "Wie sicher fuehlt sich Euer Alltag an (Kriminalitaet, Stabilitaet, Frieden)?",
-        social: "Wie empfindet Ihr Zusammenhalt, Fairness, Lebensqualitaet im Miteinander?",
-      },
-      sourceModal: {
-        title: "Jahresdaten: Quellen",
-        close: "Schliessen",
-        noLoaded: "Keine Jahresquellen geladen.",
-        source: "Quelle",
-        dataset: "Datensatz:",
-        none: "Keine Einzelquellen hinterlegt.",
-      },
-      methodModal: { close: "Schliessen" },
-      table: { rank: "Rang", country: "Land", index: "Index", delta: "Delta", votes: "Stimmen" },
-    },
-    en: {
-      langName: "English",
-      nav: { stats: "World Stats", vote: "Vote", method: "Method", switchView: "Switch view" },
-      stats: {
-        title: "World Stats",
-        mapByRegion: "World map by regions",
-        legendLow: "low",
-        legendMid: "medium",
-        legendHigh: "high",
-        geoRegion: "Continent",
-        geoCountry: "Country",
-        geoState: "Region/State",
-        geoCity: "City",
-        geoReset: "Reset map",
-        geoAllContinents: "All continents",
-        geoAllCountries: "All countries",
-        geoAllRegions: "All regions",
-        geoAllCities: "All cities",
-        selectionPrefix: "Selection:",
-        selectionWorld: "Worldwide",
-        selectionAllCountries: "All countries",
-        metric: "Metric",
-        regionCountry: "Region / Country",
-        worldAggregate: "Worldwide (aggregate)",
-        otherCountry: "Other / not listed",
-        trendPrefix: "Trend:",
-        trendSinceLastMonth: "since last month",
-        trendNoPrev: "n/a (no previous period)",
-        votesLabel: "Votes:",
-        sampleSmall: "Small sample ({count} votes)",
-        sampleGrowing: "Sample growing ({count} votes)",
-        noAnnualRows: "No annual country values available.",
-        noMonthlyRows: "No countries with at least {min} votes this month yet.",
-      },
-      modes: {
-        monthly: "Monthly",
-        annual: "Annual",
-        sources: "Sources",
-        annualHint: "Official annual data {year} (static, curated)",
-        annualLoadFailed: "Annual data could not be loaded.",
-      },
-      live: {
-        liveApi: "Live API",
-        localCache: "local cache",
-        busy: "Voting is currently under load",
-        queue: "Queue: {count} vote(s)",
-      },
-      vote: {
-        step: "Step {current} of {total}",
-        detected: "Detected: {country}",
-        source: "Source: {mode}",
-        manualToggle: "Select manually",
-      },
-      cooldown: {
-        note: "Note:",
-        queueActive: "Queue active:",
-        principle: "Principle:",
-        already: "You already voted this month (local safeguard). Next submission from",
-        queueText: "{count} vote(s) will be retried automatically. Please do not submit duplicates.",
-        busy: "Statistics remain available. Voting may be briefly delayed under load.",
-        principleText: "anonymous & aggregated. 1 vote per device and month (server-side enforced).",
-      },
-      toast: {
-        random: "Random values set.",
-        bufferedSent: "Buffered vote sent successfully.",
-        month: "Month {month}",
-        votedAlready: "Already voted this month.",
-        localGuard: "Local safeguard active.",
-        voteSaved: "Vote saved.",
-        voteThanks: "Thanks for your vote.",
-        serverRule: "Server-side monthly rule applied.",
-        busyBuffered: "Voting busy - vote buffered.",
-        autoRetry: "The app retries automatically.",
-        voteFailed: "Vote failed.",
-        retryLater: "Please try again later.",
-        shared: "Shared.",
-        linkCopied: "Link copied.",
-        shareUnavailable: "Share not available.",
-        shareCanceled: "Share canceled.",
-      },
-      charts: { noData: "no data", trendLabel: "Trend", profileLabel: "Profile", votes: "votes" },
-      metrics: {
-        global: "Overall satisfaction",
-        politics: "Politics",
-        environment: "Environment",
-        safety: "Safety",
-        social: "Social",
-      },
-      metricDesc: {
-        politics: "How satisfied are you with the overall political situation?",
-        environment: "How do you experience nature, climate, air, water, and future sustainability?",
-        safety: "How safe does your daily life feel (crime, stability, peace)?",
-        social: "How do you perceive cohesion, fairness, and quality of life in society?",
-      },
-      sourceModal: {
-        title: "Annual data: sources",
-        close: "Close",
-        noLoaded: "No annual sources loaded.",
-        source: "Source",
-        dataset: "Dataset:",
-        none: "No individual sources provided.",
-      },
-      methodModal: { close: "Close" },
-      table: { rank: "Rank", country: "Country", index: "Index", delta: "Delta", votes: "Votes" },
-    },
   };
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
-  function deepRead(obj, path) {
-    return String(path || "").split(".").reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
-  }
-
-  function t(key, vars = {}) {
-    const lang = I18N[appState.uiLang] ? appState.uiLang : "de";
-    const template = deepRead(I18N[lang], key) ?? deepRead(I18N.de, key) ?? key;
-    return String(template).replace(/\{(\w+)\}/g, (_m, token) => (vars[token] !== undefined ? String(vars[token]) : `{${token}}`));
-  }
-
-  function resolveUiLang(input) {
-    const raw = String(input || "").toLowerCase();
-    if (raw.startsWith("de")) return "de";
-    if (raw.startsWith("en")) return "en";
-    return "de";
-  }
 
   function fmtInt(n) {
     return Number(n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -500,7 +267,7 @@
     const m = /^(\d{4})-(\d{2})$/.exec(key || "");
     if (!m) return key;
     const d = new Date(Number(m[1]), Number(m[2]) - 1, 1);
-    return `${d.toLocaleString(appState.uiLocale || "de-DE", { month: "short" })} ${String(d.getFullYear()).slice(2)}`;
+    return `${d.toLocaleString("de-DE", { month: "short" })} ${String(d.getFullYear()).slice(2)}`;
   }
 
   function escapeHtml(str) {
@@ -573,11 +340,12 @@
   }
 
   function metricLabel(metric) {
-    return t(`metrics.${metric}`) || metric;
+    const hit = METRICS.find((m) => m.key === metric);
+    return hit ? hit.label : metric;
   }
 
   function countryLabel(code) {
-    if (code === "WORLD") return t("stats.worldAggregate");
+    if (code === "WORLD") return "Weltweit (Aggregat)";
     return COUNTRY_BY_CODE[code] ? COUNTRY_BY_CODE[code].name : code;
   }
 
@@ -726,20 +494,20 @@
     if (!body) return;
     const annual = appState.annualBaseline;
     if (!annual) {
-      body.innerHTML = `<div class="muted">${escapeHtml(t("sourceModal.noLoaded"))}</div>`;
+      body.innerHTML = "<div class=\"muted\">Keine Jahresquellen geladen.</div>";
       return;
     }
     const items = (annual.sources || []).map((src) => {
       if (!src || typeof src !== "object") return "";
-      const label = escapeHtml(src.title || src.name || t("sourceModal.source"));
+      const label = escapeHtml(src.title || src.name || "Quelle");
       const url = src.url ? String(src.url) : "";
       if (!url) return `<li>${label}</li>`;
       return `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a></li>`;
     }).filter(Boolean);
     const note = annual.sourceNote ? `<div class="sourceMeta">${escapeHtml(annual.sourceNote)}</div>` : "";
     body.innerHTML = `
-      <div class="fineprint">${escapeHtml(t("sourceModal.dataset"))} <span class="pill">${escapeHtml(String(annual.year || ""))}</span></div>
-      ${items.length ? `<ul class="sourceList">${items.join("")}</ul>` : `<div class="muted">${escapeHtml(t("sourceModal.none"))}</div>`}
+      <div class="fineprint">Datensatz: <span class="pill">${escapeHtml(String(annual.year || ""))}</span></div>
+      ${items.length ? `<ul class="sourceList">${items.join("")}</ul>` : "<div class=\"muted\">Keine Einzelquellen hinterlegt.</div>"}
       ${note}
     `;
   }
@@ -769,126 +537,14 @@
     const sourceBtn = $("#annualSourcesBtn");
     const annual = isAnnualMode();
     if (monthlyBtn) {
-      monthlyBtn.textContent = t("modes.monthly");
       monthlyBtn.classList.toggle("active", !annual);
       monthlyBtn.setAttribute("aria-pressed", annual ? "false" : "true");
     }
     if (annualBtn) {
-      annualBtn.textContent = t("modes.annual");
       annualBtn.classList.toggle("active", annual);
       annualBtn.setAttribute("aria-pressed", annual ? "true" : "false");
     }
-    if (sourceBtn) {
-      sourceBtn.textContent = t("modes.sources");
-      sourceBtn.hidden = !annual;
-    }
-  }
-
-  function applyStaticTranslations() {
-    document.documentElement.lang = appState.uiLang;
-    const langSel = $("#langSelect");
-    if (langSel) langSel.value = appState.uiLang;
-    if (langSel) langSel.setAttribute("aria-label", appState.uiLang === "en" ? "Select language" : "Sprache waehlen");
-
-    const navButtons = $$(".nav .chipIcon");
-    if (navButtons[0]) navButtons[0].setAttribute("aria-label", t("nav.stats"));
-    if (navButtons[1]) navButtons[1].setAttribute("aria-label", t("nav.vote"));
-    if (navButtons[2]) navButtons[2].setAttribute("aria-label", t("nav.method"));
-
-    const statsTab = $("#statsTab");
-    const voteTab = $("#voteTab");
-    const viewPager = $(".viewPager");
-    if (statsTab) statsTab.setAttribute("aria-label", t("nav.stats"));
-    if (voteTab) voteTab.setAttribute("aria-label", t("nav.vote"));
-    if (viewPager) viewPager.setAttribute("aria-label", t("nav.switchView"));
-
-    const dots = $$(".viewDot");
-    const showWord = appState.uiLang === "en" ? "show" : "anzeigen";
-    if (dots[0]) dots[0].setAttribute("aria-label", `${t("nav.stats")} ${showWord}`);
-    if (dots[1]) dots[1].setAttribute("aria-label", `${t("nav.vote")} ${showWord}`);
-    const swap = $("#viewSwapBtn");
-    if (swap) swap.setAttribute("aria-label", t("nav.switchView"));
-
-    const statsTitle = $("#statsTitle");
-    if (statsTitle) statsTitle.textContent = t("stats.title");
-    const worldMapRegionLabel = $("#worldMapRegionLabel");
-    if (worldMapRegionLabel) worldMapRegionLabel.textContent = t("stats.mapByRegion");
-    const legendLow = $("#legendLow");
-    const legendMid = $("#legendMid");
-    const legendHigh = $("#legendHigh");
-    if (legendLow) legendLow.innerHTML = `<i class="c low"></i>${escapeHtml(t("stats.legendLow"))}`;
-    if (legendMid) legendMid.innerHTML = `<i class="c mid"></i>${escapeHtml(t("stats.legendMid"))}`;
-    if (legendHigh) legendHigh.innerHTML = `<i class="c high"></i>${escapeHtml(t("stats.legendHigh"))}`;
-
-    const geoRegionLabel = $("#geoRegionLabel");
-    const geoCountryLabel = $("#geoCountryLabel");
-    const geoStateLabel = $("#geoStateLabel");
-    const geoCityLabel = $("#geoCityLabel");
-    const geoResetBtn = $("#geoResetBtn");
-    if (geoRegionLabel) geoRegionLabel.textContent = t("stats.geoRegion");
-    if (geoCountryLabel) geoCountryLabel.textContent = t("stats.geoCountry");
-    if (geoStateLabel) geoStateLabel.textContent = t("stats.geoState");
-    if (geoCityLabel) geoCityLabel.textContent = t("stats.geoCity");
-    if (geoResetBtn) geoResetBtn.textContent = t("stats.geoReset");
-
-    const globalMoodLabel = $("#globalMoodLabel");
-    if (globalMoodLabel) globalMoodLabel.textContent = "Global Mood Index";
-    const metricLabelNode = $("#metricLabel");
-    const countryFilterLabel = $("#countryFilterLabel");
-    if (metricLabelNode) metricLabelNode.textContent = t("stats.metric");
-    if (countryFilterLabel) countryFilterLabel.textContent = t("stats.regionCountry");
-
-    const methodCloseBtn = $("#methodCloseBtn");
-    const sourceCloseBtn = $("#sourceCloseBtn");
-    const sourceTitle = $("#sourceTitle");
-    const questTitle = $("#questTitle");
-    const questHint = document.querySelector("#vote .cardHd .hint");
-    const questCountryLabel = document.querySelector(".questCountry > .label");
-    const overrideToggleText = document.querySelector(".overrideToggle");
-    const submitVoteBtn = $("#submitVote");
-    const randomizeBtn = $("#randomize");
-    const methodTitle = $("#methodTitle");
-    const tableHeadCells = $$(".table thead th");
-    if (methodCloseBtn) methodCloseBtn.textContent = t("methodModal.close");
-    if (sourceCloseBtn) sourceCloseBtn.textContent = t("sourceModal.close");
-    if (sourceTitle) sourceTitle.textContent = t("sourceModal.title");
-    if (methodTitle) methodTitle.textContent = appState.uiLang === "en" ? "Method (short)" : "Methodik (kurz)";
-    if (questTitle) questTitle.textContent = appState.uiLang === "en" ? "Monthly Voting" : "Monatliche Abstimmung";
-    if (questHint) questHint.textContent = appState.uiLang === "en"
-      ? "Rate four areas, then confirm submission."
-      : "Vier Bereiche bewerten, dann Abgabe bestaetigen.";
-    if (questCountryLabel) questCountryLabel.textContent = appState.uiLang === "en"
-      ? "Country (auto-detected, optional manual)"
-      : "Land (automatisch erkannt, optional manuell)";
-    if (overrideToggleText) overrideToggleText.lastChild.textContent = ` ${t("vote.manualToggle")}`;
-    if (submitVoteBtn) submitVoteBtn.textContent = appState.uiLang === "en" ? "Submit" : "Abgeben";
-    if (randomizeBtn) randomizeBtn.textContent = appState.uiLang === "en" ? "Randomize" : "Zufallswerte";
-    if (tableHeadCells[0]) tableHeadCells[0].textContent = t("table.rank");
-    if (tableHeadCells[1]) tableHeadCells[1].textContent = t("table.country");
-    if (tableHeadCells[2]) tableHeadCells[2].textContent = t("table.index");
-    if (tableHeadCells[3]) tableHeadCells[3].textContent = t("table.delta");
-    if (tableHeadCells[4]) tableHeadCells[4].textContent = t("table.votes");
-  }
-
-  function applyLanguage(lang, { persist = true } = {}) {
-    appState.uiLang = resolveUiLang(lang);
-    appState.uiLocale = appState.uiLang === "en" ? "en-US" : "de-DE";
-    if (persist) safeSet(UI_LANG_KEY, appState.uiLang);
-    applyStaticTranslations();
-    renderDataModeUi();
-    renderMetricsSelect();
-    renderCountrySelects();
-    updateCountryUi();
-    initGeoSelectors();
-    renderVoteGrid();
-    if (appState.dashboard) {
-      renderHeader(appState.dashboard);
-      renderLeaderboard(appState.dashboard);
-      renderCharts(appState.dashboard);
-      renderScoreTiles(appState.dashboard);
-    } else {
-      updateGeoSelectionText("ALL", "ALL");
-    }
+    if (sourceBtn) sourceBtn.hidden = !annual;
   }
 
   async function setDataMode(mode) {
@@ -983,7 +639,7 @@
     appState.questStep = safeStep;
     const text = $("#questStepText");
     const fill = $("#questStepFill");
-    if (text) text.textContent = t("vote.step", { current: safeStep, total: 4 });
+    if (text) text.textContent = `Schritt ${safeStep} von 4`;
     if (fill) fill.style.width = `${(safeStep / 4) * 100}%`;
   }
 
@@ -1144,7 +800,7 @@
 
   function queueInfoText() {
     if (!queueSize()) return "";
-    return ` · ${t("live.queue", { count: queueSize() })}`;
+    return ` · Warteschlange: ${queueSize()} Vote(s)`;
   }
 
   function renderMetricsSelect() {
@@ -1153,7 +809,7 @@
     METRICS.forEach((metric) => {
       const option = document.createElement("option");
       option.value = metric.key;
-      option.textContent = metricLabel(metric.key);
+      option.textContent = metric.label;
       sel.appendChild(option);
     });
     sel.value = appState.currentMetric;
@@ -1168,7 +824,7 @@
 
     const world = document.createElement("option");
     world.value = "WORLD";
-    world.textContent = t("stats.worldAggregate");
+    world.textContent = "Weltweit (Aggregat)";
     statsSel.appendChild(world);
 
     COUNTRIES.forEach((country) => {
@@ -1185,7 +841,7 @@
 
     const other = document.createElement("option");
     other.value = "OTHER";
-    other.textContent = t("stats.otherCountry");
+    other.textContent = "Anderes / nicht genannt";
     voteSel.appendChild(other);
 
     statsSel.value = appState.currentCountry;
@@ -1200,7 +856,7 @@
 
     const detected = appState.detectedCountry || "OTHER";
     if (detectedBadge) {
-      detectedBadge.textContent = t("vote.detected", { country: countryLabel(detected) });
+      detectedBadge.textContent = `Erkannt: ${countryLabel(detected)}`;
     }
 
     const manualToggleOn = overrideToggle && overrideToggle.checked;
@@ -1208,7 +864,7 @@
     const manual = manualToggleOn && selected && selected !== detected;
     appState.countrySourceMode = manual ? "manual" : "auto";
     if (sourceBadge) {
-      sourceBadge.textContent = t("vote.source", { mode: manual ? "manual" : "auto" });
+      sourceBadge.textContent = `Quelle: ${manual ? "manual" : "auto"}`;
     }
 
     if (voteSelect) {
@@ -1250,51 +906,51 @@
   }
 
   function updateGeoSelectionText(regionKey, countryCode, stateName, cityName) {
-    const regionLabel = regionKey && GEO_TREE[regionKey] ? GEO_TREE[regionKey].label : t("stats.selectionWorld");
-    const countryLabelText = countryCode && COUNTRY_BY_CODE[countryCode] ? COUNTRY_BY_CODE[countryCode].name : t("stats.selectionAllCountries");
+    const regionLabel = regionKey && GEO_TREE[regionKey] ? GEO_TREE[regionKey].label : "Weltweit";
+    const countryLabelText = countryCode && COUNTRY_BY_CODE[countryCode] ? COUNTRY_BY_CODE[countryCode].name : "Alle Laender";
     const parts = [regionLabel, countryLabelText];
     if (stateName && stateName !== "ALL") parts.push(stateName);
     if (cityName && cityName !== "ALL") parts.push(cityName);
     const node = $("#geoSelection");
-    if (node) node.textContent = `${t("stats.selectionPrefix")} ${parts.join(" / ")}`;
+    if (node) node.textContent = `Auswahl: ${parts.join(" / ")}`;
   }
 
   function populateGeoStates(countryCode, selectedState = "ALL") {
     const stateSelect = $("#geoStateSelect");
     const citySelect = $("#geoCitySelect");
     if (!countryCode || countryCode === "ALL") {
-      setSelectOptions(stateSelect, [{ value: "ALL", label: t("stats.geoAllRegions") }], "ALL");
-      setSelectOptions(citySelect, [{ value: "ALL", label: t("stats.geoAllCities") }], "ALL");
+      setSelectOptions(stateSelect, [{ value: "ALL", label: "Alle Regionen" }], "ALL");
+      setSelectOptions(citySelect, [{ value: "ALL", label: "Alle Staedte" }], "ALL");
       return;
     }
 
     const regionKey = getRegionForCountry(countryCode);
     const countryData = regionKey ? GEO_TREE[regionKey].countries[countryCode] : null;
     const stateNames = countryData ? Object.keys(countryData.states) : [];
-    const options = [{ value: "ALL", label: t("stats.geoAllRegions") }].concat(stateNames.map((name) => ({ value: name, label: name })));
+    const options = [{ value: "ALL", label: "Alle Regionen" }].concat(stateNames.map((name) => ({ value: name, label: name })));
     setSelectOptions(stateSelect, options, selectedState);
 
     const stateKey = stateSelect.value;
     if (!countryData || stateKey === "ALL") {
-      setSelectOptions(citySelect, [{ value: "ALL", label: t("stats.geoAllCities") }], "ALL");
+      setSelectOptions(citySelect, [{ value: "ALL", label: "Alle Staedte" }], "ALL");
       return;
     }
 
     const cityNames = Object.keys(countryData.states[stateKey].cities || {});
-    setSelectOptions(citySelect, [{ value: "ALL", label: t("stats.geoAllCities") }].concat(cityNames.map((name) => ({ value: name, label: name }))), "ALL");
+    setSelectOptions(citySelect, [{ value: "ALL", label: "Alle Staedte" }].concat(cityNames.map((name) => ({ value: name, label: name }))), "ALL");
   }
 
   function populateGeoCountries(regionKey, selectedCountry = "ALL") {
     const countrySelect = $("#geoCountrySelect");
     const codes = getCountriesForRegion(regionKey);
-    const options = [{ value: "ALL", label: t("stats.geoAllCountries") }].concat(codes.map((code) => ({ value: code, label: countryLabel(code) })));
+    const options = [{ value: "ALL", label: "Alle Laender" }].concat(codes.map((code) => ({ value: code, label: countryLabel(code) })));
     setSelectOptions(countrySelect, options, selectedCountry);
     populateGeoStates(countrySelect.value);
   }
 
   function initGeoSelectors() {
     const regionSelect = $("#geoRegionSelect");
-    const regionOptions = [{ value: "ALL", label: t("stats.geoAllContinents") }].concat(
+    const regionOptions = [{ value: "ALL", label: "Alle Kontinente" }].concat(
       Object.keys(GEO_TREE).map((key) => ({ value: key, label: GEO_TREE[key].label })),
     );
     setSelectOptions(regionSelect, regionOptions, "ALL");
@@ -1312,8 +968,8 @@
       node.innerHTML = `
         <div class="metricTop">
           <div>
-            <div class="name">${escapeHtml(metricLabel(metric.key))}</div>
-            <div class="desc">${escapeHtml(t(`metricDesc.${metric.key}`))}</div>
+            <div class="name">${escapeHtml(metric.name)}</div>
+            <div class="desc">${escapeHtml(metric.desc)}</div>
           </div>
           <div class="pill">0-10</div>
         </div>
@@ -1454,23 +1110,14 @@
     const oceanGradientId = "worldOceanGradient";
 
     const defs = svg.append("defs");
-    const oceanGradient = defs.append("radialGradient")
+    const oceanGradient = defs.append("linearGradient")
       .attr("id", oceanGradientId)
-      .attr("cx", "50%")
-      .attr("cy", "46%")
-      .attr("r", "64%");
-    oceanGradient.append("stop").attr("offset", "0%").attr("stop-color", "#d9f0ff");
-    oceanGradient.append("stop").attr("offset", "62%").attr("stop-color", "#c4e4fb");
-    oceanGradient.append("stop").attr("offset", "100%").attr("stop-color", "#a4c9e6");
-
-    const vignetteGradientId = "worldSphereVignette";
-    const vignetteGradient = defs.append("radialGradient")
-      .attr("id", vignetteGradientId)
-      .attr("cx", "50%")
-      .attr("cy", "50%")
-      .attr("r", "58%");
-    vignetteGradient.append("stop").attr("offset", "58%").attr("stop-color", "rgba(0,0,0,0)");
-    vignetteGradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(5,18,38,0.24)");
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "0%")
+      .attr("y2", "100%");
+    oceanGradient.append("stop").attr("offset", "0%").attr("stop-color", "#c9e9ff");
+    oceanGradient.append("stop").attr("offset", "100%").attr("stop-color", "#a9d8fb");
 
     const zoomLayer = svg.append("g").attr("class", "world-zoom-layer");
     zoomLayer.append("path")
@@ -1483,12 +1130,6 @@
       .datum({ type: "Sphere" })
       .attr("d", spherePath)
       .attr("class", "world-sphere-halo");
-
-    zoomLayer.append("path")
-      .datum({ type: "Sphere" })
-      .attr("d", spherePath)
-      .attr("class", "world-sphere-vignette")
-      .attr("fill", `url(#${vignetteGradientId})`);
 
     let countries = [];
     try {
@@ -1513,9 +1154,9 @@
       .join("path")
       .attr("d", path)
       .attr("class", "world-country")
-      .attr("fill", "#f0eee8")
-      .attr("stroke", "rgba(158, 180, 207, 0.34)")
-      .attr("stroke-width", 0.34)
+      .attr("fill", "#e9edf2")
+      .attr("stroke", "#cfd6de")
+      .attr("stroke-width", 0.35)
       .each((feature) => {
         const code = N3_TO_A2[String(feature.id).padStart(3, "0")] || N3_TO_A2[String(feature.id)];
         if (code) featureByCode[code] = feature;
@@ -1592,37 +1233,37 @@
 
     if (!Number.isFinite(delta)) {
       deltaNode.classList.add("warn");
-      deltaNode.innerHTML = `<span class="dot"></span>${escapeHtml(t("stats.trendPrefix"))} <strong>${escapeHtml(t("stats.trendNoPrev"))}</strong>`;
+      deltaNode.innerHTML = "<span class=\"dot\"></span>Trend: <strong>n/a</strong> (Vorperiode fehlt)";
     } else {
       deltaNode.classList.add(delta > 0.05 ? "ok" : delta < -0.05 ? "bad" : "warn");
-      deltaNode.innerHTML = `<span class="dot"></span>${escapeHtml(t("stats.trendPrefix"))} <strong>${delta >= 0 ? "+" : ""}${Number(delta).toFixed(2)}</strong> ${escapeHtml(t("stats.trendSinceLastMonth"))}`;
+      deltaNode.innerHTML = `<span class="dot"></span>Trend: <strong>${delta >= 0 ? "+" : ""}${Number(delta).toFixed(2)}</strong> seit letztem Monat`;
     }
 
     const votes = Number(header.totalVotes || 0);
-    $("#totalVotes").innerHTML = `<span class="dot"></span>${escapeHtml(t("stats.votesLabel"))} <strong>${fmtInt(votes)}</strong>`;
+    $("#totalVotes").innerHTML = `<span class="dot"></span>Stimmen: <strong>${fmtInt(votes)}</strong>`;
 
     const sample = $("#sampleHint");
     if (votes < 25) {
       sample.classList.remove("ok", "bad");
       sample.classList.add("warn");
-      sample.innerHTML = `<span class="dot"></span><strong>${escapeHtml(t("stats.sampleSmall", { count: fmtInt(votes) }))}</strong>`;
+      sample.innerHTML = `<span class="dot"></span><strong>Kleine Stichprobe (${fmtInt(votes)} Stimmen)</strong>`;
     } else {
       sample.classList.remove("warn", "bad");
       sample.classList.add("ok");
-      sample.innerHTML = `<span class="dot"></span><strong>${escapeHtml(t("stats.sampleGrowing", { count: fmtInt(votes) }))}</strong>`;
+      sample.innerHTML = `<span class="dot"></span><strong>Stichprobe waechst (${fmtInt(votes)} Stimmen)</strong>`;
     }
 
-    $("#serverTime").textContent = meta.serverTime ? new Date(meta.serverTime).toLocaleString(appState.uiLocale || "de-DE") : "-";
+    $("#serverTime").textContent = meta.serverTime ? new Date(meta.serverTime).toLocaleString("de-DE") : "-";
     $("#ver").textContent = meta.version || "-";
     $("#monthPill").textContent = data.month || monthKey();
 
     const hint = $("#liveHint");
     if (isAnnualMode()) {
       const year = appState.annualBaseline && appState.annualBaseline.year ? appState.annualBaseline.year : data.month;
-      hint.textContent = t("modes.annualHint", { year });
+      hint.textContent = `Offizielle Jahresdaten ${year} (statisch, kuratiert)`;
     } else {
-      const source = appState.online ? t("live.liveApi") : t("live.localCache");
-      const busy = status.voteBusy ? ` · ${t("live.busy")}` : "";
+      const source = appState.online ? "Live-API" : "lokaler Cache";
+      const busy = status.voteBusy ? " · Voting gerade ausgelastet" : "";
       hint.textContent = `${source}${busy}${queueInfoText()}`;
     }
 
@@ -1632,21 +1273,21 @@
   function renderCooldownNote(voteBusy) {
     const note = $("#cooldownNote");
     if (localMonthLocked()) {
-      note.innerHTML = `<strong>${escapeHtml(t("cooldown.note"))}</strong> ${escapeHtml(t("cooldown.already"))} <span class="pill">${nextMonthKey()}</span>.`;
+      note.innerHTML = `<strong>Hinweis:</strong> Ihr habt diesen Monat bereits abgestimmt (lokale Sicherung). Naechste Abgabe ab <span class="pill">${nextMonthKey()}</span>.`;
       return;
     }
 
     if (queueSize()) {
-      note.innerHTML = `<strong>${escapeHtml(t("cooldown.queueActive"))}</strong> ${escapeHtml(t("cooldown.queueText", { count: queueSize() }))}`;
+      note.innerHTML = `<strong>Warteschlange aktiv:</strong> ${queueSize()} Vote(s) werden automatisch erneut gesendet. Bitte nichts doppelt absenden.`;
       return;
     }
 
     if (voteBusy) {
-      note.innerHTML = `<strong>${escapeHtml(t("cooldown.note"))}</strong> ${escapeHtml(t("cooldown.busy"))}`;
+      note.innerHTML = "<strong>Hinweis:</strong> Statistik bleibt abrufbar. Voting kann bei Last kurz verzoegert sein.";
       return;
     }
 
-    note.innerHTML = `<strong>${escapeHtml(t("cooldown.principle"))}</strong> ${escapeHtml(t("cooldown.principleText"))}`;
+    note.innerHTML = "<strong>Prinzip:</strong> anonym & aggregiert. 1 Stimme pro Geraet und Monat (serverseitig abgesichert).";
   }
 
   function renderLeaderboard(data) {
@@ -1659,8 +1300,8 @@
     if (!rows.length) {
       const tr = document.createElement("tr");
       tr.innerHTML = isAnnualMode()
-        ? `<td colspan="5" class="muted">${escapeHtml(t("stats.noAnnualRows"))}</td>`
-        : `<td colspan="5" class="muted">${escapeHtml(t("stats.noMonthlyRows", { min: minCountryN }))}</td>`;
+        ? "<td colspan=\"5\" class=\"muted\">Keine Jahreswerte fuer Laender vorhanden.</td>"
+        : `<td colspan="5" class="muted">Noch keine Laender mit mindestens ${minCountryN} Stimmen im aktuellen Monat.</td>`;
       body.appendChild(tr);
       return;
     }
@@ -1688,7 +1329,7 @@
 
   function renderCharts(data) {
     if (typeof window.Chart !== "function") {
-      toast("Chart.js unavailable.", "Charts are not displayed.");
+      toast("Chart.js nicht verfuegbar.", "Diagramme werden nicht angezeigt.");
       return;
     }
 
@@ -1706,7 +1347,7 @@
       data: {
         labels: trendLabels,
         datasets: [{
-          label: `${t("charts.trendLabel")} - ${metricLabel(appState.currentMetric)} (${countryLabel(appState.currentCountry)})`,
+          label: `Trend - ${metricLabel(appState.currentMetric)} (${countryLabel(appState.currentCountry)})`,
           data: trendValues,
           tension: 0.25,
           pointRadius: 2.5,
@@ -1726,7 +1367,7 @@
             enabled: true,
             callbacks: {
               label(ctx) {
-                if (ctx.raw === null) return t("charts.noData");
+                if (ctx.raw === null) return "keine Daten";
                 return `${ctx.dataset.label}: ${Number(ctx.raw).toFixed(2)}`;
               },
             },
@@ -1743,9 +1384,9 @@
     appState.radarChart = new window.Chart($("#radarChart"), {
       type: "radar",
       data: {
-        labels: [t("metrics.politics"), t("metrics.environment"), t("metrics.safety"), t("metrics.social")],
+        labels: ["Politik", "Umwelt", "Sicherheit", "Soziales"],
         datasets: [{
-          label: `${t("charts.profileLabel")} - ${countryLabel(profile.country || appState.currentCountry)}${profile.n ? ` (${profile.n} ${t("charts.votes")})` : ""}`,
+          label: `Profil - ${countryLabel(profile.country || appState.currentCountry)}${profile.n ? ` (${profile.n} Stimmen)` : ""}`,
           data: [Number(profile.politics || 0), Number(profile.environment || 0), Number(profile.safety || 0), Number(profile.social || 0)],
           borderWidth: 2,
           pointRadius: 3,
@@ -1797,7 +1438,7 @@
         appState.online = false;
         await renderDashboard(buildOfflineDashboard());
         const hint = $("#liveHint");
-        if (hint) hint.textContent = t("modes.annualLoadFailed");
+        if (hint) hint.textContent = "Jahresdaten konnten nicht geladen werden.";
       } finally {
         appState.refreshBusy = false;
       }
@@ -1895,7 +1536,7 @@
         await postVote(next.payload);
         removeQueueById(next.id);
         setLocalMonthLock();
-        toast(t("toast.bufferedSent"), t("toast.month", { month: next.payload.month }));
+        toast("Gepufferter Vote erfolgreich gesendet.", `Monat ${next.payload.month}`);
         await refreshDashboard();
       } catch (err) {
         if (err.status === 409) {
@@ -1920,9 +1561,9 @@
       if (hint) {
         if (isAnnualMode()) {
           const year = appState.annualBaseline && appState.annualBaseline.year ? appState.annualBaseline.year : "";
-          hint.textContent = t("modes.annualHint", { year });
+          hint.textContent = `Offizielle Jahresdaten ${year} (statisch, kuratiert)`;
         } else {
-          hint.textContent = `${appState.online ? t("live.liveApi") : t("live.localCache")}${queueInfoText()}`;
+          hint.textContent = `${appState.online ? "Live-API" : "lokaler Cache"}${queueInfoText()}`;
         }
       }
     }
@@ -1945,7 +1586,7 @@
       return;
     }
     if (localMonthLocked()) {
-      toast(t("toast.votedAlready"), t("toast.localGuard"));
+      toast("Diesen Monat bereits abgestimmt.", "Lokale Sicherung aktiv.");
       return;
     }
 
@@ -1958,25 +1599,25 @@
         appState.countrySourceMode = "auto";
       }
       setLocalMonthLock();
-      toast(t("toast.voteSaved"), t("toast.voteThanks"));
+      toast("Abstimmung gespeichert.", "Danke fuer deine Stimme.");
       setActiveTab("statsTab");
       await refreshDashboard();
     } catch (err) {
       if (err.status === 409) {
         setLocalMonthLock();
         renderCooldownNote(false);
-        toast(t("toast.votedAlready"), t("toast.serverRule"));
+        toast("Diesen Monat bereits abgestimmt.", "Serverseitige Monatsregel hat gegriffen.");
         return;
       }
 
       if (err.status === 429 || err.status === 503 || !err.status) {
         enqueueVote(payload, err.status || "network");
         renderCooldownNote(true);
-        toast(t("toast.busyBuffered"), t("toast.autoRetry"));
+        toast("Voting ausgelastet - Stimme gepuffert.", "Die App sendet automatisch nach.");
         return;
       }
 
-      toast(t("toast.voteFailed"), t("toast.retryLater"));
+      toast("Abstimmung fehlgeschlagen.", "Bitte spaeter erneut versuchen.");
       console.error("submitVote failed", err);
     }
   }
@@ -1989,29 +1630,29 @@
       slider.dispatchEvent(new Event("input"));
     });
     setQuestStep(4);
-    toast(t("toast.random"));
+    toast("Zufallswerte gesetzt.");
   }
 
   async function share() {
-    const text = `${t("stats.title")}: ${metricLabel(appState.currentMetric)} - ${countryLabel(appState.currentCountry)}.`;
+    const text = `Globales Stimmungsbarometer: ${metricLabel(appState.currentMetric)} - ${countryLabel(appState.currentCountry)}.`;
     const url = window.location.href.split("#")[0] + "#stats";
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: t("stats.title"), text, url });
-        toast(t("toast.shared"));
+        await navigator.share({ title: "Globales Stimmungsbarometer", text, url });
+        toast("Geteilt.");
         return;
       }
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(`${text} ${url}`);
-        toast(t("toast.linkCopied"));
+        toast("Link kopiert.");
         return;
       }
 
-      toast(t("toast.shareUnavailable"));
+      toast("Teilen nicht verfuegbar.");
     } catch (_err) {
-      toast(t("toast.shareCanceled"));
+      toast("Teilen abgebrochen.");
     }
   }
 
@@ -2136,17 +1777,17 @@
       const citySelect = $("#geoCitySelect");
       const regionKey = getRegionForCountry(countryCode);
       if (!countryCode || countryCode === "ALL") {
-        setSelectOptions(citySelect, [{ value: "ALL", label: t("stats.geoAllCities") }], "ALL");
+        setSelectOptions(citySelect, [{ value: "ALL", label: "Alle Staedte" }], "ALL");
         return;
       }
       const countryData = regionKey ? GEO_TREE[regionKey].countries[countryCode] : null;
       if (!countryData || stateKey === "ALL") {
-        setSelectOptions(citySelect, [{ value: "ALL", label: t("stats.geoAllCities") }], "ALL");
+        setSelectOptions(citySelect, [{ value: "ALL", label: "Alle Staedte" }], "ALL");
         updateGeoSelectionText(regionKey, countryCode, "ALL", "ALL");
         return;
       }
       const cities = Object.keys(countryData.states[stateKey].cities || {});
-      setSelectOptions(citySelect, [{ value: "ALL", label: t("stats.geoAllCities") }].concat(cities.map((c) => ({ value: c, label: c }))), "ALL");
+      setSelectOptions(citySelect, [{ value: "ALL", label: "Alle Staedte" }].concat(cities.map((c) => ({ value: c, label: c }))), "ALL");
       const center = countryData.states[stateKey].center;
       if (center) worldMapZoomToLonLat(center[0], center[1], 4.2);
       updateGeoSelectionText(regionKey, countryCode, stateKey, "ALL");
@@ -2262,27 +1903,10 @@
     setInterval(flushVoteQueue, 5000);
   }
 
-  function initLanguageControls() {
-    const stored = safeGet(UI_LANG_KEY, "");
-    const auto = (navigator.languages && navigator.languages[0]) || navigator.language || "de";
-    appState.uiLang = resolveUiLang(stored || auto);
-    appState.uiLocale = appState.uiLang === "en" ? "en-US" : "de-DE";
-    applyStaticTranslations();
-    const langSelect = $("#langSelect");
-    if (langSelect) {
-      langSelect.value = appState.uiLang;
-      langSelect.addEventListener("change", async (event) => {
-        applyLanguage(event.target.value, { persist: true });
-        await refreshDashboard();
-      });
-    }
-  }
-
   async function init() {
     await loadRuntimeConfig();
     appState.backendConfigured = Boolean(appState.apiBase);
     appState.pendingVotes = readPendingVotes();
-    initLanguageControls();
 
     initViewControls();
     setActiveTab("statsTab", { animate: false });
