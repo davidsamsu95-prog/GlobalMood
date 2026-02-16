@@ -212,6 +212,13 @@ const voteLimiter = rateLimit({
   },
 });
 
+
+// --- minimal public routes (avoid browser 404 noise) ---
+app.get("/", (_req, res) => res.status(200).send("GSB backend online. Use /api/v1/meta"));
+app.get("/health", (_req, res) => res.status(200).json({ ok: true, ts: new Date().toISOString() }));
+app.get("/favicon.ico", (_req, res) => res.status(204).end()); // no favicon served from backend
+// --- end ---
+
 app.get("/api/v1/meta", (req, res) => {
   const deviceToken = getDeviceToken(req, res);
   const detectedCountry = detectCountryFromHeaders(req);
