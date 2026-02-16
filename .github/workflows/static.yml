@@ -41,6 +41,8 @@ jobs:
           cp GM_Strukture/app.js dist/app.js
           cp GM_Strukture/config.js dist/config.js
           cp GM_Strukture/config.json dist/config.json
+          cp GM_Strukture/annual_baseline.json dist/annual_baseline.json
+          if [ -d GM_Strukture/assets ]; then cp -r GM_Strukture/assets dist/assets; fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
