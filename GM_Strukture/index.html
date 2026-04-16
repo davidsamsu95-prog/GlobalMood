@@ -1,296 +1,964 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <link rel="icon" type="image/png" href="assets/global-mood-icon-v01.png">
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Globales Stimmungsbarometer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anatolisches Salz | Herkunft, Reinheit, Handel</title>
   <meta
     name="description"
-    content="Globales Stimmungsbarometer: anonym, aggregiert, monatlich. Klar strukturiertes World-Barometer fuer GitHub Pages."
+    content="Anatolisches Salz für Gastronomie, Spa und Handel. Klare Herkunft, sorgfältige Verarbeitung und transparente Qualität aus Anatolien."
   />
-  <meta name="theme-color" content="#f6f7f8" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#f5efe5" />
+  <style>
+    :root {
+      --bg: #f6f0e6;
+      --bg-soft: #fbf7f1;
+      --surface: rgba(255, 252, 247, 0.84);
+      --surface-strong: rgba(255, 252, 247, 0.94);
+      --text: #241912;
+      --muted: #6f6258;
+      --line: rgba(36, 25, 18, 0.12);
+      --accent: #b97933;
+      --accent-dark: #8f5921;
+      --sand: #d8b788;
+      --salt: #f6f3ef;
+      --shadow: 0 20px 60px rgba(36, 25, 18, 0.12);
+      --radius: 26px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(185, 121, 51, 0.16), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(123, 92, 67, 0.10), transparent 34%),
+        linear-gradient(180deg, #fbf6ef 0%, #f2e8da 100%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: rgba(251, 246, 239, 0.78);
+      border-bottom: 1px solid rgba(36, 25, 18, 0.08);
+    }
+
+    .topbarInner {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brandKicker {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .brandTitle,
+    h1,
+    h2,
+    h3,
+    .quote {
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .brandTitle {
+      font-size: clamp(24px, 3vw, 34px);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .langSelect {
+      border: 1px solid rgba(36, 25, 18, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 252, 247, 0.82);
+      color: var(--text);
+      padding: 11px 14px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav a,
+    .btn {
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 180ms ease;
+    }
+
+    .nav a { color: var(--muted); }
+    .nav a:hover { background: rgba(36, 25, 18, 0.05); color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .btnPrimary {
+      color: #fff;
+      background: linear-gradient(180deg, #c98941 0%, #a9682b 100%);
+      box-shadow: 0 14px 30px rgba(185, 121, 51, 0.24);
+    }
+
+    .btnGhost {
+      background: rgba(255, 252, 247, 0.78);
+      border-color: rgba(36, 25, 18, 0.12);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 58px 0 30px;
+    }
+
+    .heroGrid,
+    .storyGrid,
+    .ctaGrid,
+    .contactGrid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .heroCopy {
+      padding: 14px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 252, 247, 0.82);
+      border: 1px solid rgba(36, 25, 18, 0.09);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(44px, 7vw, 76px);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    .heroLead,
+    .sectionHead p,
+    .featureCard p,
+    .storyText p,
+    .audienceCard p,
+    .contactCard p,
+    .fieldNote,
+    .footnote,
+    .contactList {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .heroLead {
+      max-width: 640px;
+      font-size: clamp(18px, 2vw, 22px);
+      margin: 0 0 24px;
+    }
+
+    .heroActions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .heroFacts,
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .factCard,
+    .featureCard,
+    .audienceCard,
+    .contactCard,
+    .storyText,
+    .storyVisual,
+    .ctaText,
+    .ctaForm {
+      padding: 24px;
+    }
+
+    .factValue {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .factText {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .heroVisual {
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      padding: 20px;
+    }
+
+    .heroVisual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(185, 121, 51, 0.20), transparent 28%),
+        radial-gradient(circle at 80% 82%, rgba(81, 57, 40, 0.14), transparent 30%);
+      pointer-events: none;
+    }
+
+    .saltGlow {
+      position: absolute;
+      width: 78%;
+      height: 78%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0));
+      filter: blur(18px);
+    }
+
+    .saltScene {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      min-height: 100%;
+      padding: 22px;
+    }
+
+    .heroImageWrap {
+      position: relative;
+      width: min(100%, 470px);
+      border-radius: 34px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.66);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+        0 28px 60px rgba(48, 34, 24, 0.20);
+      transform: rotate(-4deg);
+    }
+
+    .heroImageWrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.10));
+      pointer-events: none;
+    }
+
+    .heroImage {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .heroBadge {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 2;
+      max-width: 250px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .heroBadge strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .heroBadge span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    section.block { padding: 42px 0; }
+
+    .sectionHead {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.05;
+    }
+
+    .sectionHead p {
+      margin: 0;
+      max-width: 620px;
+      font-size: 17px;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .storyVisual {
+      display: grid;
+      align-items: center;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.56), rgba(255,255,255,0.88)),
+        radial-gradient(circle at top left, rgba(185,121,51,0.14), transparent 34%);
+    }
+
+    .quote {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.18;
+    }
+
+    .quoteMeta {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .audienceCard ul,
+    .contactList {
+      margin: 14px 0 0;
+      padding-left: 18px;
+    }
+
+    .audienceCard li,
+    .contactList li {
+      margin: 8px 0;
+      color: var(--muted);
+    }
+
+    .ctaForm {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid rgba(36, 25, 18, 0.13);
+      border-radius: 16px;
+      background: rgba(255, 252, 247, 0.92);
+      padding: 14px 16px;
+      font: inherit;
+      color: var(--text);
+    }
+
+    .field textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .fieldNote,
+    .footnote {
+      font-size: 13px;
+    }
+
+    .contactGrid { margin-bottom: 46px; }
+
+    .footer {
+      padding: 26px 0 50px;
+      color: var(--muted);
+    }
+
+    .footerInner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-top: 20px;
+      border-top: 1px solid rgba(36, 25, 18, 0.10);
+    }
+
+    @media (max-width: 980px) {
+      .heroGrid,
+      .storyGrid,
+      .ctaGrid,
+      .contactGrid,
+      .grid3,
+      .heroFacts {
+        grid-template-columns: 1fr;
+      }
+
+      .sectionHead {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbarInner {
+        align-items: start;
+        padding: 16px 0;
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: start;
+      }
+
+      .hero { padding-top: 28px; }
+      .heroVisual { min-height: 360px; }
+
+      .heroBadge {
+        position: static;
+        max-width: none;
+        margin-top: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="topbar">
-      <div class="brand" aria-label="GlobalMood">
-        <span class="brandWord">Global</span>
-        <div class="logo" aria-hidden="true">
-          <img
-            class="logoImg"
-            src="assets/global-mood-icon-v01.png"
-            alt=""
-            onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='/GlobalMood/assets/global-mood-icon-v01.png';}else if(!this.dataset.fallback2){this.dataset.fallback2='1';this.src='/assets/global-mood-icon-v01.png';}"
-          />
-        </div>
-        <span class="brandWord">Mood</span>
+  <header class="topbar">
+    <div class="container topbarInner">
+      <div class="brand" aria-label="Anatolisches Salz">
+        <span class="brandKicker" data-i18n="brand_kicker">Herkunft aus Anatolien</span>
+        <span class="brandTitle" data-i18n="brand_title">Anatolisches Salz</span>
       </div>
 
-      <nav class="nav" aria-label="Navigation">
-        <button class="chip chipIcon" data-scroll="#stats" type="button" aria-label="Weltstatistik">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm7.9 9h-3.1a15.8 15.8 0 00-1.3-5A8 8 0 0119.9 11zM12 4.1c.8 1 1.8 3 2.3 6H9.7c.5-3 1.5-5 2.3-6zM8.5 6a15.8 15.8 0 00-1.3 5H4.1A8 8 0 018.5 6zM4.1 13h3.1a15.8 15.8 0 001.3 5A8 8 0 014.1 13zm7.9 6c-.8-1-1.8-3-2.3-6h4.6c-.5 3-1.5 5-2.3 6zm3.5-1a15.8 15.8 0 001.3-5h3.1a8 8 0 01-4.4 5z"/></svg>
-        </button>
-        <button class="chip chipIcon" data-scroll="#vote" type="button" aria-label="Abstimmen">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v3H3V4zm2 5h14v11H5V9zm3 3v5h2v-5H8zm4-2v7h2v-7h-2z"/></svg>
-        </button>
-        <button class="chip chipIcon" data-scroll="#method" type="button" aria-label="Methodik">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2.1.7a7.8 7.8 0 01-.5 1.3l1.1 1.9-1.4 1.4-1.9-1.1a7.8 7.8 0 01-1.3.5L14 21h-4l-.7-2.1a7.8 7.8 0 01-1.3-.5l-1.9 1.1-1.4-1.4 1.1-1.9a7.8 7.8 0 01-.5-1.3L3 12l2.1-.7a7.8 7.8 0 01.5-1.3L4.5 8.1l1.4-1.4 1.9 1.1a7.8 7.8 0 011.3-.5L10 3h4l.7 2.1a7.8 7.8 0 011.3.5l1.9-1.1 1.4 1.4-1.1 1.9c.2.4.4.9.5 1.3L21 12z"/></svg>
-        </button>
+      <nav class="nav" aria-label="Hauptnavigation">
+        <select class="langSelect" id="langSelect" aria-label="Sprache">
+          <option value="de">DE</option>
+          <option value="en">EN</option>
+          <option value="tr">TR</option>
+        </select>
+        <a href="#herkunft" data-i18n="nav_origin">Herkunft</a>
+        <a href="#qualitaet" data-i18n="nav_quality">Qualität</a>
+        <a href="#anwendungen" data-i18n="nav_uses">Anwendungen</a>
+        <a href="#kontakt" class="btn btnPrimary" data-i18n="nav_contact">Kontakt</a>
       </nav>
-      <select id="langSelect" class="langSelect" aria-label="Sprache waehlen">
-        <option value="de">DE</option>
-        <option value="en">EN</option>
-      </select>
-    </header>
-
-    <main class="tabPanels">
-      <section class="tabPanel active" id="statsTab" role="tabpanel" aria-label="Weltstatistik">
-        <section id="stats" class="statsIntro" aria-labelledby="statsTitle">
-            <div class="statsHead">
-              <h2 id="statsTitle">Weltstatistik</h2>
-              <div class="hint" id="liveHint">Live-Statistik aus API (mit lokalem Cache-Fallback).</div>
-            </div>
-
-          <section class="worldSection" aria-label="Weltkarte nach Mood-Level">
-            <div class="worldHead">
-              <div class="label" id="worldMapRegionLabel">Weltkarte nach Regionen</div>
-              <div class="worldMeta">
-                <div class="worldLegend">
-                  <span id="legendLow"><i class="c low"></i>niedrig</span>
-                  <span id="legendMid"><i class="c mid"></i>mittel</span>
-                  <span id="legendHigh"><i class="c high"></i>hoch</span>
-                </div>
-              </div>
-            </div>
-            <div class="worldMapWrap map-card" id="worldMapCard" data-map-style="playful">
-              <div class="map-ambient" aria-hidden="true"></div>
-              <svg id="worldMapSvg" viewBox="0 0 960 480" aria-label="Globale Mood-Karte"></svg>
-              <div class="mapModeDock">
-                <div class="modeToggle" role="group" aria-label="Datenmodus">
-                <button class="chip active" id="modeMonthlyBtn" type="button">Monatlich</button>
-                <button class="chip" id="modeAnnualBtn" type="button">Jaehrlich</button>
-              </div>
-              <button class="chip" id="annualSourcesBtn" type="button" hidden>Quellen</button>
-            </div>
-            </div>
-            <div class="geoControls" aria-label="Regionenauswahl">
-              <label>
-                <span class="label" id="geoRegionLabel">Kontinent</span>
-                <select id="geoRegionSelect"></select>
-              </label>
-              <label>
-                <span class="label" id="geoCountryLabel">Land</span>
-                <select id="geoCountrySelect"></select>
-              </label>
-              <label>
-                <span class="label" id="geoStateLabel">Region/Bundesland</span>
-                <select id="geoStateSelect"></select>
-              </label>
-              <label>
-                <span class="label" id="geoCityLabel">Stadt</span>
-                <select id="geoCitySelect"></select>
-              </label>
-              <button class="chip" id="geoResetBtn" type="button">Karte zuruecksetzen</button>
-            </div>
-            <div class="hint" id="geoSelection">Auswahl: Weltweit</div>
-          </section>
-
-          <section class="heroPanel" aria-label="Global Mood Index">
-            <div class="heroMain">
-              <div class="label" id="globalMoodLabel">Global Mood Index</div>
-              <div class="heroNumber" id="globalIndex">-</div>
-              <div class="moodMeter" role="img" aria-label="Stimmungsbarometer von 0 bis 10">
-                <div class="moodScale">
-                  <span>0</span>
-                  <span>5</span>
-                  <span>10</span>
-                </div>
-                <div class="moodTrack">
-                  <div class="moodFill" id="moodFill"></div>
-                </div>
-                <div class="moodValue" id="moodValue">-</div>
-              </div>
-
-              <div class="kpiRow">
-                <div class="badge" id="deltaMoM"><span class="dot" aria-hidden="true"></span>Trend: <strong>-</strong></div>
-                <div class="badge" id="totalVotes"><span class="dot" aria-hidden="true"></span>Stimmen: <strong>0</strong></div>
-                <div class="badge warn" id="sampleHint"><span class="dot" aria-hidden="true"></span><strong>Nicht repraesentativ</strong></div>
-              </div>
-            </div>
-
-            <div class="scoreTiles" id="scoreTiles" aria-label="Bereichswerte">
-              <article class="scoreTile" data-metric="politics">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10h18v10H3zM6 7h12v3H6zM11 3h2v4h-2z"/></svg></span>
-                  <span class="scoreName">Politik</span>
-                  <span class="trend" id="trend-politics">-</span>
-                </div>
-                <div class="scoreValue" id="score-politics">0.00</div>
-              </article>
-
-              <article class="scoreTile" data-metric="environment">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2C7 8 5 11 5 14a7 7 0 1014 0c0-3-2-6-7-12z"/></svg></span>
-                  <span class="scoreName">Umwelt</span>
-                  <span class="trend" id="trend-environment">-</span>
-                </div>
-                <div class="scoreValue" id="score-environment">0.00</div>
-              </article>
-
-              <article class="scoreTile" data-metric="safety">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5z"/></svg></span>
-                  <span class="scoreName">Sicherheit</span>
-                  <span class="trend" id="trend-safety">-</span>
-                </div>
-                <div class="scoreValue" id="score-safety">0.00</div>
-              </article>
-
-              <article class="scoreTile" data-metric="social">
-                <div class="scoreTop">
-                  <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4zM8 13a4 4 0 10-4-4 4 4 0 004 4zm8 1c-2.7 0-8 1.3-8 4v2h12v-2c0-2.7-5.3-4-8-4zM8 14c-2.7 0-8 1.3-8 4v2h6v-2a5.5 5.5 0 012-4z"/></svg></span>
-                  <span class="scoreName">Soziales</span>
-                  <span class="trend" id="trend-social">-</span>
-                </div>
-                <div class="scoreValue" id="score-social">0.00</div>
-              </article>
-            </div>
-          </section>
-        </section>
-
-        <section class="card statsControlsCard" aria-label="Funktionen und Einstellungen">
-          <div class="cardBd">
-            <div class="filters">
-              <label>
-                <span class="label" id="metricLabel">Metrik</span>
-                <select id="metricSelect"></select>
-              </label>
-              <label>
-                <span class="label" id="countryFilterLabel">Region / Land</span>
-                <select id="countrySelect"></select>
-              </label>
-            </div>
-
-            <section class="chartsGrid" aria-label="Diagramme">
-              <div class="chartWrap"><canvas id="trendChart" height="130"></canvas></div>
-              <div class="chartWrap"><canvas id="radarChart" height="130"></canvas></div>
-            </section>
-
-            <table class="table" aria-label="Top Länder">
-              <thead>
-                <tr>
-                  <th>Rang</th>
-                  <th>Land</th>
-                  <th>Index</th>
-                  <th>Delta</th>
-                  <th>Stimmen</th>
-                </tr>
-              </thead>
-              <tbody id="leaderBody"></tbody>
-            </table>
-
-            <div class="foot">
-              <div>Stand: <span class="pill" id="serverTime">-</span> · Version: <span class="pill" id="ver">-</span></div>
-              <div>Datenschutz: <span class="pill">keine Accounts</span> <span class="pill">keine Namen</span> <span class="pill">nur Aggregation</span></div>
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <section class="tabPanel" id="voteTab" role="tabpanel" aria-label="Monatliche Abstimmung">
-        <aside class="card questCard" id="vote">
-          <div class="cardHd">
-            <h2 id="questTitle">Monatliche Abstimmung</h2>
-            <div class="hint">Vier Bereiche bewerten, dann Abgabe bestaetigen.</div>
-          </div>
-
-          <div class="cardBd">
-            <div class="questTop">
-              <div class="stepWrap" aria-live="polite">
-                <div class="stepText" id="questStepText">Schritt 1 von 4</div>
-                <div class="stepTrack"><div class="stepFill" id="questStepFill"></div></div>
-              </div>
-              <div class="pill" id="monthPill">-</div>
-            </div>
-
-            <label class="questCountry">
-              <span class="label">Land (automatisch erkannt, optional manuell)</span>
-              <div class="countryMeta">
-                <span class="pill" id="detectedCountryBadge">Erkannt: OTHER</span>
-                <span class="pill" id="countrySourceBadge">Quelle: auto</span>
-                <label class="overrideToggle">
-                  <input type="checkbox" id="countryOverrideToggle" />
-                  Manuell waehlen
-                </label>
-              </div>
-              <select id="voteCountry"></select>
-            </label>
-
-            <div class="voteGrid" id="voteGrid"></div>
-
-            <div class="stickyCta">
-              <button class="btn" id="submitVote" type="button">Abgeben</button>
-              <button class="btn ghost" id="randomize" type="button">Zufallswerte</button>
-            </div>
-
-            <div class="fineprint" id="cooldownNote"></div>
-
-          </div>
-        </aside>
-      </section>
-    </main>
-
-    <div class="viewPager" aria-label="Ansicht wechseln">
-      <button class="viewDot active" type="button" data-tab="statsTab" aria-label="Weltstatistik anzeigen"></button>
-      <button class="viewSwap" id="viewSwapBtn" type="button" aria-label="Ansicht wechseln">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-2.4-2.4 1.4-1.4L22 8l-5 4.8-1.4-1.4L18 9H7V7zm10 10H6l2.4 2.4-1.4 1.4L2 16l5-4.8 1.4 1.4L6 15h11v2z"/></svg>
-      </button>
-      <button class="viewDot" type="button" data-tab="voteTab" aria-label="Monatliche Abstimmung anzeigen"></button>
     </div>
-  </div>
+  </header>
 
-  <div class="toast" id="toast"></div>
-  <div class="modalWrap" id="methodModal" aria-hidden="true">
-    <div class="modalBackdrop" data-close-method-modal="true"></div>
-    <section class="modalCard" role="dialog" aria-modal="true" aria-labelledby="methodTitle" id="method">
-      <div class="modalHd">
-        <h2 id="methodTitle">Methodik (kurz)</h2>
-        <button class="chip" id="methodCloseBtn" type="button">Schliessen</button>
-      </div>
-      <div class="modalBd">
-        <ul class="methodList fineprint">
-          <li><strong>Keine Profile</strong>, keine Kommentare, kein Feed.</li>
-          <li>Laender-Erkennung ueber Infrastruktur-Header (z. B. CDN), <strong>ohne IP-Speicherung</strong>.</li>
-          <li>Nur Skalenwerte 0-10 fuer vier Bereiche + Gesamtindex.</li>
-          <li>Anzeigen nur als <strong>Aggregat</strong> ab Mindestanzahl Stimmen pro Land.</li>
-          <li>Free-Tier-freundlicher Start mit klarer Skalierungsstrategie.</li>
-        </ul>
-        <div class="fineprint tags">
-          <span class="pill">#GlobalMoodIndex</span>
-          <span class="pill">#WorldPulse</span>
-          <span class="pill">#Stimmungsbarometer</span>
+  <main>
+    <section class="hero">
+      <div class="container heroGrid">
+        <div class="heroCopy">
+          <span class="eyebrow" data-i18n="hero_eyebrow">Für Gastronomie, Spa und spezialisierten Handel</span>
+          <h1 data-i18n="hero_title">Salz mit klarer Herkunft und ehrlicher Substanz.</h1>
+          <p class="heroLead" data-i18n="hero_lead">
+            Anatolisches Salz steht für mineralische Reinheit, traditionelle Gewinnung und eine Herkunft,
+            die sich nachvollziehbar kommunizieren lässt.
+          </p>
+
+          <div class="heroActions">
+            <a class="btn btnPrimary" href="#kontakt" data-i18n="hero_cta_primary">Muster anfragen</a>
+            <a class="btn btnGhost" href="#herkunft" data-i18n="hero_cta_secondary">Mehr zur Herkunft</a>
+          </div>
+
+          <div class="heroFacts" aria-label="Kernfakten">
+            <article class="factCard card">
+              <div class="factValue" data-i18n="fact_origin_label">Herkunft</div>
+              <div class="factText" data-i18n="fact_origin_text">Gewonnen in anatolischen Salzregionen mit Fokus auf nachvollziehbare Lieferwege.</div>
+            </article>
+            <article class="factCard card">
+              <div class="factValue" data-i18n="fact_quality_label">Qualität</div>
+              <div class="factText" data-i18n="fact_quality_text">Geeignet für Partner, die auf Reinheit, Dokumentation und konstante Chargen achten.</div>
+            </article>
+            <article class="factCard card">
+              <div class="factValue" data-i18n="fact_positioning_label">Positionierung</div>
+              <div class="factText" data-i18n="fact_positioning_text">Einsetzbar für Kulinarik, Hammam, Spa und hochwertige Handelskonzepte.</div>
+            </article>
+          </div>
+        </div>
+
+        <div class="heroVisual card" aria-label="Produktbild von anatolischem Salz">
+          <div class="saltScene">
+            <div class="saltGlow"></div>
+            <div class="heroImageWrap">
+              <img
+                class="heroImage"
+                src="assets/images/AnatoliSaltPic1.png"
+                alt="Anatolisches Salz als Produktbild"
+              />
+            </div>
+          </div>
+          <div class="heroBadge">
+            <strong data-i18n="badge_title">Naturprodukt mit Charakter</strong>
+            <span data-i18n="badge_text">Warme Mineraltöne, klare Struktur und eine Bildwelt, die Wertigkeit sofort sichtbar macht.</span>
+          </div>
         </div>
       </div>
     </section>
-  </div>
 
-  <div class="modalWrap" id="sourceModal" aria-hidden="true">
-    <div class="modalBackdrop" data-close-source-modal="true"></div>
-    <section class="modalCard sourceModalCard" role="dialog" aria-modal="true" aria-labelledby="sourceTitle">
-      <div class="modalHd">
-        <h2 id="sourceTitle">Jahresdaten: Quellen</h2>
-        <button class="chip" id="sourceCloseBtn" type="button">Schliessen</button>
+    <section class="block" id="herkunft">
+      <div class="container storyGrid">
+        <article class="storyText card">
+          <div class="sectionHead" style="margin-bottom:16px;">
+            <h2 data-i18n="origin_title">Herkunft mit Geschichte</h2>
+          </div>
+          <p data-i18n="origin_text_1">
+            Anatolien ist seit Jahrhunderten ein Raum von Handelswegen, handwerklicher Verarbeitung und geologischer Vielfalt.
+            Genau darin liegt der Charakter dieses Salzes: nicht in austauschbaren Wellness-Floskeln, sondern in einer realen Herkunft.
+          </p>
+          <p style="margin-top:16px;" data-i18n="origin_text_2">
+            Das Salz wird als ursprüngliches Naturprodukt gezeigt, dessen Wert aus Reinheit, Verfügbarkeit und glaubwürdiger
+            Erzählbarkeit entsteht.
+          </p>
+        </article>
+
+        <aside class="storyVisual card">
+          <blockquote class="quote" data-i18n="quote_text">
+            „Anatolisches Salz ist kein Deko-Produkt, sondern eine Herkunft, die man schmeckt, sieht und sauber vermarkten kann.“
+          </blockquote>
+          <div class="quoteMeta" data-i18n="quote_meta">Aus Anatolien für Küche, Spa und Handel</div>
+        </aside>
       </div>
-      <div class="modalBd" id="sourceModalBody"></div>
     </section>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+    <section class="block" id="qualitaet">
+      <div class="container">
+        <div class="sectionHead">
+          <h2 data-i18n="quality_title">Qualität und Vertrauen</h2>
+          <p data-i18n="quality_intro">
+            Für Partner, die ein ehrliches Naturprodukt mit klarer Herkunft, verlässlicher Qualität und hochwertiger Wirkung suchen.
+          </p>
+        </div>
+
+        <div class="grid3">
+          <article class="featureCard card">
+            <h3 data-i18n="feature_1_title">Reine Herkunft</h3>
+            <p data-i18n="feature_1_text">
+              Gewonnen in anatolischen Salzregionen und geeignet für eine glaubwürdige Herkunftskommunikation.
+            </p>
+          </article>
+          <article class="featureCard card">
+            <h3 data-i18n="feature_2_title">Konstante Qualität</h3>
+            <p data-i18n="feature_2_text">
+              Geeignet für Partner, die auf Reinheit, Dokumentation und verlässliche Chargen achten.
+            </p>
+          </article>
+          <article class="featureCard card">
+            <h3 data-i18n="feature_3_title">Vielseitig einsetzbar</h3>
+            <p data-i18n="feature_3_text">
+              Passend für Kulinarik, Hammam, Spa und hochwertige Handelskonzepte.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="anwendungen">
+      <div class="container">
+        <div class="sectionHead">
+          <h2 data-i18n="uses_title">Anwendungsfelder</h2>
+          <p data-i18n="uses_intro">
+            Herkunft, Materialität und Qualität machen anatolisches Salz in unterschiedlichen Bereichen besonders attraktiv.
+          </p>
+        </div>
+
+        <div class="grid3">
+          <article class="audienceCard card">
+            <h3 data-i18n="audience_1_title">Gastronomie</h3>
+            <p data-i18n="audience_1_text">Für Küchen und Konzepte, die auf charaktervolle Rohwaren und verlässliche Nachbestellung setzen.</p>
+            <ul>
+              <li data-i18n="audience_1_li_1">Als Tischsalz, Kochsalz oder Bestandteil einer Produktlinie</li>
+              <li data-i18n="audience_1_li_2">Geeignet für klare Herkunftskommunikation</li>
+              <li data-i18n="audience_1_li_3">Skalierbar für kleine und größere Abnahmemengen</li>
+            </ul>
+          </article>
+          <article class="audienceCard card">
+            <h3 data-i18n="audience_2_title">Hammam & Spa</h3>
+            <p data-i18n="audience_2_text">Hier zählt das sinnliche Produktbild: Textur, Mineralität und ritualisierte Anwendung.</p>
+            <ul>
+              <li data-i18n="audience_2_li_1">Starke Story für Treatments und Retail-Produkte</li>
+              <li data-i18n="audience_2_li_2">Passend für Peelings, Rituale und Geschenksets</li>
+              <li data-i18n="audience_2_li_3">Hochwertige Wahrnehmung durch klare Herkunft</li>
+            </ul>
+          </article>
+          <article class="audienceCard card">
+            <h3 data-i18n="audience_3_title">Handel</h3>
+            <p data-i18n="audience_3_text">Für Händler, Feinkost und spezialisierte Konzepte mit Fokus auf differenzierbare Naturprodukte.</p>
+            <ul>
+              <li data-i18n="audience_3_li_1">Eigenmarke oder Wiederverkauf denkbar</li>
+              <li data-i18n="audience_3_li_2">Ausbau für B2B-Unterlagen und Produktdaten möglich</li>
+              <li data-i18n="audience_3_li_3">Geeignet für spätere Sortimentsvertiefung</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="container ctaGrid">
+        <article class="ctaText card">
+          <div class="sectionHead" style="margin-bottom:16px;">
+            <h2 data-i18n="cta_title">Kontakt</h2>
+          </div>
+          <p data-i18n="cta_text_1">
+            Sie interessieren sich für anatolisches Salz für Gastronomie, Spa oder Handel?
+            Senden Sie uns Ihre Anfrage, und wir melden uns mit den passenden Informationen zurück.
+          </p>
+          <p style="margin-top:16px;" data-i18n="cta_text_2">
+            Gern unterstützen wir Sie bei Produktfragen, Mengen, Einsatzbereichen und individuellen Anforderungen.
+          </p>
+        </article>
+
+        <form class="ctaForm card" id="kontakt">
+          <div class="field">
+            <label for="name" data-i18n="form_name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Name oder Unternehmen" data-i18n-placeholder="form_name_placeholder" />
+          </div>
+          <div class="field">
+            <label for="email">E-Mail</label>
+            <input id="email" name="email" type="email" placeholder="kontakt@beispiel.de" data-i18n-placeholder="form_email_placeholder" />
+          </div>
+          <div class="field">
+            <label for="interesse" data-i18n="form_interest">Interesse</label>
+            <select id="interesse" name="interesse">
+              <option data-i18n="form_interest_option_1">Gastronomie</option>
+              <option data-i18n="form_interest_option_2">Hammam / Spa</option>
+              <option data-i18n="form_interest_option_3">Handel / Wiederverkauf</option>
+              <option data-i18n="form_interest_option_4">Allgemeine Anfrage</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="nachricht" data-i18n="form_message">Nachricht</label>
+            <textarea id="nachricht" name="nachricht" placeholder="Welche Art von Salz oder Gebinde wird benötigt?" data-i18n-placeholder="form_message_placeholder"></textarea>
+          </div>
+          <button class="btn btnPrimary" type="button" data-i18n="form_button">Anfrage senden</button>
+          <div class="footnote" data-i18n="form_note">
+            Für Produktanfragen, Musterwünsche und individuelle Angebote.
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footerInner">
+      <div data-i18n="footer_left">Anatolisches Salz · Herkunft, Reinheit, Handel</div>
+      <div data-i18n="footer_right">Anatolien · Qualität · Vertrauen</div>
+    </div>
+  </footer>
+  <script>
+    const translations = {
+      de: {
+        page_title: "Anatolisches Salz | Herkunft, Reinheit, Handel",
+        page_description: "Anatolisches Salz für Gastronomie, Spa und Handel. Klare Herkunft, sorgfältige Verarbeitung und transparente Qualität aus Anatolien.",
+        brand_kicker: "Herkunft aus Anatolien",
+        brand_title: "Anatolisches Salz",
+        nav_origin: "Herkunft",
+        nav_quality: "Qualität",
+        nav_uses: "Anwendungen",
+        nav_contact: "Kontakt",
+        hero_eyebrow: "Für Gastronomie, Spa und spezialisierten Handel",
+        hero_title: "Salz mit klarer Herkunft und ehrlicher Substanz.",
+        hero_lead: "Anatolisches Salz steht für mineralische Reinheit, traditionelle Gewinnung und eine Herkunft, die sich nachvollziehbar kommunizieren lässt.",
+        hero_cta_primary: "Muster anfragen",
+        hero_cta_secondary: "Mehr zur Herkunft",
+        fact_origin_label: "Herkunft",
+        fact_origin_text: "Gewonnen in anatolischen Salzregionen mit Fokus auf nachvollziehbare Lieferwege.",
+        fact_quality_label: "Qualität",
+        fact_quality_text: "Geeignet für Partner, die auf Reinheit, Dokumentation und konstante Chargen achten.",
+        fact_positioning_label: "Positionierung",
+        fact_positioning_text: "Einsetzbar für Kulinarik, Hammam, Spa und hochwertige Handelskonzepte.",
+        badge_title: "Naturprodukt mit Charakter",
+        badge_text: "Warme Mineraltöne, klare Struktur und eine Bildwelt, die Wertigkeit sofort sichtbar macht.",
+        origin_title: "Herkunft mit Geschichte",
+        origin_text_1: "Anatolien ist seit Jahrhunderten ein Raum von Handelswegen, handwerklicher Verarbeitung und geologischer Vielfalt. Genau darin liegt der Charakter dieses Salzes: nicht in austauschbaren Wellness-Floskeln, sondern in einer realen Herkunft.",
+        origin_text_2: "Das Salz wird als ursprüngliches Naturprodukt gezeigt, dessen Wert aus Reinheit, Verfügbarkeit und glaubwürdiger Erzählbarkeit entsteht.",
+        quote_text: "„Anatolisches Salz ist kein Deko-Produkt, sondern eine Herkunft, die man schmeckt, sieht und sauber vermarkten kann.“",
+        quote_meta: "Aus Anatolien für Küche, Spa und Handel",
+        quality_title: "Qualität und Vertrauen",
+        quality_intro: "Für Partner, die ein ehrliches Naturprodukt mit klarer Herkunft, verlässlicher Qualität und hochwertiger Wirkung suchen.",
+        feature_1_title: "Reine Herkunft",
+        feature_1_text: "Gewonnen in anatolischen Salzregionen und geeignet für eine glaubwürdige Herkunftskommunikation.",
+        feature_2_title: "Konstante Qualität",
+        feature_2_text: "Geeignet für Partner, die auf Reinheit, Dokumentation und verlässliche Chargen achten.",
+        feature_3_title: "Vielseitig einsetzbar",
+        feature_3_text: "Passend für Kulinarik, Hammam, Spa und hochwertige Handelskonzepte.",
+        uses_title: "Anwendungsfelder",
+        uses_intro: "Herkunft, Materialität und Qualität machen anatolisches Salz in unterschiedlichen Bereichen besonders attraktiv.",
+        audience_1_title: "Gastronomie",
+        audience_1_text: "Für Küchen und Konzepte, die auf charaktervolle Rohwaren und verlässliche Nachbestellung setzen.",
+        audience_1_li_1: "Als Tischsalz, Kochsalz oder Bestandteil einer Produktlinie",
+        audience_1_li_2: "Geeignet für klare Herkunftskommunikation",
+        audience_1_li_3: "Skalierbar für kleine und größere Abnahmemengen",
+        audience_2_title: "Hammam & Spa",
+        audience_2_text: "Hier zählt das sinnliche Produktbild: Textur, Mineralität und ritualisierte Anwendung.",
+        audience_2_li_1: "Starke Story für Treatments und Retail-Produkte",
+        audience_2_li_2: "Passend für Peelings, Rituale und Geschenksets",
+        audience_2_li_3: "Hochwertige Wahrnehmung durch klare Herkunft",
+        audience_3_title: "Handel",
+        audience_3_text: "Für Händler, Feinkost und spezialisierte Konzepte mit Fokus auf differenzierbare Naturprodukte.",
+        audience_3_li_1: "Eigenmarke oder Wiederverkauf denkbar",
+        audience_3_li_2: "Ausbau für B2B-Unterlagen und Produktdaten möglich",
+        audience_3_li_3: "Geeignet für spätere Sortimentsvertiefung",
+        cta_title: "Kontakt",
+        cta_text_1: "Sie interessieren sich für anatolisches Salz für Gastronomie, Spa oder Handel? Senden Sie uns Ihre Anfrage, und wir melden uns mit den passenden Informationen zurück.",
+        cta_text_2: "Gern unterstützen wir Sie bei Produktfragen, Mengen, Einsatzbereichen und individuellen Anforderungen.",
+        form_name: "Name",
+        form_name_placeholder: "Name oder Unternehmen",
+        form_email_placeholder: "kontakt@beispiel.de",
+        form_interest: "Interesse",
+        form_interest_option_1: "Gastronomie",
+        form_interest_option_2: "Hammam / Spa",
+        form_interest_option_3: "Handel / Wiederverkauf",
+        form_interest_option_4: "Allgemeine Anfrage",
+        form_message: "Nachricht",
+        form_message_placeholder: "Welche Art von Salz oder Gebinde wird benötigt?",
+        form_button: "Anfrage senden",
+        form_note: "Für Produktanfragen, Musterwünsche und individuelle Angebote.",
+        footer_left: "Anatolisches Salz · Herkunft, Reinheit, Handel",
+        footer_right: "Anatolien · Qualität · Vertrauen"
+      },
+      en: {
+        page_title: "Anatolian Salt | Origin, Purity, Trade",
+        page_description: "Anatolian salt for gastronomy, spa and trade. Clear origin, careful processing and transparent quality from Anatolia.",
+        brand_kicker: "Origin from Anatolia",
+        brand_title: "Anatolian Salt",
+        nav_origin: "Origin",
+        nav_quality: "Quality",
+        nav_uses: "Applications",
+        nav_contact: "Contact",
+        hero_eyebrow: "For gastronomy, spa and specialized trade",
+        hero_title: "Salt with clear origin and honest substance.",
+        hero_lead: "Anatolian salt stands for mineral purity, traditional extraction and an origin that can be communicated with credibility.",
+        hero_cta_primary: "Request sample",
+        hero_cta_secondary: "Learn about origin",
+        fact_origin_label: "Origin",
+        fact_origin_text: "Sourced from Anatolian salt regions with a focus on traceable supply routes.",
+        fact_quality_label: "Quality",
+        fact_quality_text: "Suitable for partners who value purity, documentation and consistent batches.",
+        fact_positioning_label: "Positioning",
+        fact_positioning_text: "Suitable for culinary use, hammam, spa and premium retail concepts.",
+        badge_title: "Natural product with character",
+        badge_text: "Warm mineral tones, clear structure and imagery that immediately communicates quality.",
+        origin_title: "Origin with history",
+        origin_text_1: "For centuries, Anatolia has been shaped by trade routes, craftsmanship and geological diversity. That is exactly where the character of this salt comes from: not from generic wellness language, but from a real place of origin.",
+        origin_text_2: "The salt is presented as an original natural product whose value comes from purity, availability and a story that can be told credibly.",
+        quote_text: "\"Anatolian salt is not a decorative product, but an origin you can taste, see and market with clarity.\"",
+        quote_meta: "From Anatolia for kitchen, spa and trade",
+        quality_title: "Quality and trust",
+        quality_intro: "For partners looking for an honest natural product with clear origin, reliable quality and a premium presence.",
+        feature_1_title: "Pure origin",
+        feature_1_text: "Sourced from Anatolian salt regions and suitable for credible origin communication.",
+        feature_2_title: "Consistent quality",
+        feature_2_text: "Suitable for partners who value purity, documentation and reliable batches.",
+        feature_3_title: "Versatile use",
+        feature_3_text: "Suitable for culinary use, hammam, spa and premium retail concepts.",
+        uses_title: "Applications",
+        uses_intro: "Origin, material quality and character make Anatolian salt especially appealing across different applications.",
+        audience_1_title: "Gastronomy",
+        audience_1_text: "For kitchens and concepts that rely on expressive raw materials and dependable reordering.",
+        audience_1_li_1: "As table salt, cooking salt or part of a product line",
+        audience_1_li_2: "Suitable for clear origin communication",
+        audience_1_li_3: "Scalable for small and larger order volumes",
+        audience_2_title: "Hammam & Spa",
+        audience_2_text: "Here the sensory image matters: texture, minerality and ritualized use.",
+        audience_2_li_1: "Strong story for treatments and retail products",
+        audience_2_li_2: "Suitable for scrubs, rituals and gift sets",
+        audience_2_li_3: "Premium perception through clear origin",
+        audience_3_title: "Trade",
+        audience_3_text: "For retailers, delicatessen and specialized concepts focused on differentiated natural products.",
+        audience_3_li_1: "Private label or resale possible",
+        audience_3_li_2: "Can be expanded with B2B materials and product data",
+        audience_3_li_3: "Suitable for later assortment expansion",
+        cta_title: "Contact",
+        cta_text_1: "Are you interested in Anatolian salt for gastronomy, spa or trade? Send us your inquiry and we will get back to you with the right information.",
+        cta_text_2: "We are happy to assist with product questions, quantities, use cases and individual requirements.",
+        form_name: "Name",
+        form_name_placeholder: "Name or company",
+        form_email_placeholder: "contact@example.com",
+        form_interest: "Interest",
+        form_interest_option_1: "Gastronomy",
+        form_interest_option_2: "Hammam / Spa",
+        form_interest_option_3: "Trade / Resale",
+        form_interest_option_4: "General inquiry",
+        form_message: "Message",
+        form_message_placeholder: "What type of salt or package size do you need?",
+        form_button: "Send inquiry",
+        form_note: "For product inquiries, sample requests and individual offers.",
+        footer_left: "Anatolian Salt · Origin, Purity, Trade",
+        footer_right: "Anatolia · Quality · Trust"
+      },
+      tr: {
+        page_title: "Anadolu Tuzu | Köken, Saflık, Ticaret",
+        page_description: "Gastronomi, spa ve ticaret için Anadolu tuzu. Anadolu'dan net köken, özenli işleme ve şeffaf kalite.",
+        brand_kicker: "Anadolu'dan gelen köken",
+        brand_title: "Anadolu Tuzu",
+        nav_origin: "Köken",
+        nav_quality: "Kalite",
+        nav_uses: "Kullanım Alanları",
+        nav_contact: "İletişim",
+        hero_eyebrow: "Gastronomi, spa ve uzman ticaret için",
+        hero_title: "Net kökeni ve gerçek niteliği olan tuz.",
+        hero_lead: "Anadolu tuzu mineral saflığı, geleneksel çıkarımı ve güvenle anlatılabilecek bir kökeni temsil eder.",
+        hero_cta_primary: "Numune iste",
+        hero_cta_secondary: "Kökeni keşfet",
+        fact_origin_label: "Köken",
+        fact_origin_text: "İzlenebilir tedarik yollarına odaklanan Anadolu tuz bölgelerinden elde edilir.",
+        fact_quality_label: "Kalite",
+        fact_quality_text: "Saflık, dokümantasyon ve tutarlı partilere önem veren iş ortakları için uygundur.",
+        fact_positioning_label: "Konumlandırma",
+        fact_positioning_text: "Mutfak, hammam, spa ve premium ticaret konseptleri için uygundur.",
+        badge_title: "Karakterli doğal ürün",
+        badge_text: "Sıcak mineral tonları, net yapı ve kaliteyi anında hissettiren bir görsel dünya.",
+        origin_title: "Tarih taşıyan köken",
+        origin_text_1: "Anadolu yüzyıllardır ticaret yolları, zanaatkârlık ve jeolojik çeşitlilikle şekillenmiştir. Bu tuzun karakteri de tam olarak buradan gelir: genel geçer wellness söylemlerinden değil, gerçek bir kökenden.",
+        origin_text_2: "Tuz, değeri saflık, erişilebilirlik ve güvenilir biçimde anlatılabilen hikâyesinden gelen özgün bir doğal ürün olarak sunulur.",
+        quote_text: "\"Anadolu tuzu dekoratif bir ürün değil; tadılan, görülen ve net biçimde pazarlanabilen bir kökendir.\"",
+        quote_meta: "Anadolu'dan mutfak, spa ve ticaret için",
+        quality_title: "Kalite ve güven",
+        quality_intro: "Net kökeni, güvenilir kalitesi ve güçlü duruşu olan doğal bir ürün arayan iş ortakları için.",
+        feature_1_title: "Saf köken",
+        feature_1_text: "Anadolu tuz bölgelerinden elde edilir ve güvenilir köken iletişimi için uygundur.",
+        feature_2_title: "Tutarlı kalite",
+        feature_2_text: "Saflık, dokümantasyon ve güvenilir partilere önem veren iş ortakları için uygundur.",
+        feature_3_title: "Çok yönlü kullanım",
+        feature_3_text: "Mutfak, hammam, spa ve premium ticaret konseptleri için uygundur.",
+        uses_title: "Kullanım alanları",
+        uses_intro: "Köken, malzeme niteliği ve karakter, Anadolu tuzunu farklı kullanım alanlarında özellikle çekici kılar.",
+        audience_1_title: "Gastronomi",
+        audience_1_text: "Karakterli hammaddelere ve güvenilir tekrar siparişe dayanan mutfaklar ve konseptler için.",
+        audience_1_li_1: "Sofra tuzu, yemeklik tuz veya ürün serisinin parçası olarak",
+        audience_1_li_2: "Net köken iletişimi için uygun",
+        audience_1_li_3: "Küçük ve büyük sipariş hacimleri için ölçeklenebilir",
+        audience_2_title: "Hammam & Spa",
+        audience_2_text: "Burada duyusal etki önemlidir: doku, minerallik ve ritüelleşmiş kullanım.",
+        audience_2_li_1: "Bakım uygulamaları ve perakende ürünleri için güçlü hikâye",
+        audience_2_li_2: "Peeling, ritüel ve hediye setleri için uygun",
+        audience_2_li_3: "Net köken sayesinde premium algı",
+        audience_3_title: "Ticaret",
+        audience_3_text: "Farklılaşan doğal ürünlere odaklanan perakendeciler, gurme satış noktaları ve uzman konseptler için.",
+        audience_3_li_1: "Özel marka veya yeniden satış mümkün",
+        audience_3_li_2: "B2B materyalleri ve ürün verileriyle genişletilebilir",
+        audience_3_li_3: "İleride ürün gamını büyütmek için uygun",
+        cta_title: "İletişim",
+        cta_text_1: "Gastronomi, spa veya ticaret için Anadolu tuzu ile ilgileniyor musunuz? Talebinizi gönderin, size uygun bilgilerle geri dönüş yapalım.",
+        cta_text_2: "Ürün soruları, miktarlar, kullanım alanları ve özel ihtiyaçlar konusunda memnuniyetle destek oluruz.",
+        form_name: "İsim",
+        form_name_placeholder: "İsim veya şirket",
+        form_email_placeholder: "iletisim@ornek.com",
+        form_interest: "İlgi alanı",
+        form_interest_option_1: "Gastronomi",
+        form_interest_option_2: "Hammam / Spa",
+        form_interest_option_3: "Ticaret / Yeniden satış",
+        form_interest_option_4: "Genel talep",
+        form_message: "Mesaj",
+        form_message_placeholder: "Hangi tür tuz veya ambalaj boyutuna ihtiyacınız var?",
+        form_button: "Talep gönder",
+        form_note: "Ürün talepleri, numune istekleri ve özel teklifler için.",
+        footer_left: "Anadolu Tuzu · Köken, Saflık, Ticaret",
+        footer_right: "Anadolu · Kalite · Güven"
+      }
+    };
+
+    function resolveLanguage() {
+      const saved = localStorage.getItem("site_lang");
+      if (saved && translations[saved]) return saved;
+      const browser = (navigator.language || "de").toLowerCase();
+      if (browser.startsWith("tr")) return "tr";
+      if (browser.startsWith("en")) return "en";
+      return "de";
+    }
+
+    function applyLanguage(lang) {
+      const dict = translations[lang] || translations.de;
+      document.documentElement.lang = lang;
+      document.title = dict.page_title;
+      document.querySelector('meta[name="description"]').setAttribute("content", dict.page_description);
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.getAttribute("data-i18n");
+        if (dict[key]) node.textContent = dict[key];
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+        const key = node.getAttribute("data-i18n-placeholder");
+        if (dict[key]) node.setAttribute("placeholder", dict[key]);
+      });
+      const select = document.getElementById("langSelect");
+      if (select) select.value = lang;
+      localStorage.setItem("site_lang", lang);
+    }
+
+    const initialLanguage = resolveLanguage();
+    applyLanguage(initialLanguage);
+    document.getElementById("langSelect").addEventListener("change", (event) => {
+      applyLanguage(event.target.value);
+    });
+  </script>
 </body>
 </html>
